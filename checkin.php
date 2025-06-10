@@ -1,1 +1,0 @@
-<?php echo 'Handles check-in logic'; ?>
