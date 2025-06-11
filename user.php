@@ -12,7 +12,7 @@ header('Content-Type: application/json');
 
 // ✅ Create new admin
 function signUpAdmin($data) {
-    global $conn;
+    global $mysqli;
 
     validateAdminSignup($data); // this should be defined in auth.php
 
@@ -23,7 +23,7 @@ function signUpAdmin($data) {
 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $conn->prepare("INSERT INTO admin (username, password_hash, email, phone_number) VALUES (?, ?, ?, ?)");
+    $stmt = $mysqli->prepare("INSERT INTO admin (username, password_hash, email, phone_number) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssss", $username, $hashedPassword, $email, $phone_number);
 
     if ($stmt->execute()) {
@@ -47,9 +47,9 @@ function signUpAdmin($data) {
 
 // ✅ Get all admins
 function getAllAdmins() {
-    global $conn;
+    global $mysqli;
 
-    $result = $conn->query("SELECT id, username, email, phone_number FROM admin");
+    $result = $mysqli->query("SELECT id, username, email, phone_number FROM admin");
 
     $admins = [];
     while ($row = $result->fetch_assoc()) {
@@ -58,10 +58,11 @@ function getAllAdmins() {
 
     echo json_encode(['admins' => $admins]);
 }
-function getAdminById($id) {
-    global $conn;
 
-    $stmt = $conn->prepare("SELECT id, username, email, phone_number FROM admin WHERE id = ?");
+function getAdminById($id) {
+    global $mysqli;
+
+    $stmt = $mysqli->prepare("SELECT id, username, email, phone_number FROM admin WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
 
@@ -76,12 +77,11 @@ function getAdminById($id) {
     $stmt->close();
 }
 
-
 // ✅ Get one admin by username
 function getAdminByUsername($username) {
-    global $conn;
+    global $mysqli;
 
-    $stmt = $conn->prepare("SELECT id, username, email, phone_number FROM admin WHERE username = ?");
+    $stmt = $mysqli->prepare("SELECT id, username, email, phone_number FROM admin WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
 
@@ -96,12 +96,11 @@ function getAdminByUsername($username) {
     $stmt->close();
 }
 
-
 // ✅ Update admin info
 function updateAdminByUsername($username, $data) {
-    global $conn;
+    global $mysqli;
 
-    $stmt = $conn->prepare("SELECT * FROM admin WHERE username = ?");
+    $stmt = $mysqli->prepare("SELECT * FROM admin WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $existing = $stmt->get_result()->fetch_assoc();
@@ -117,18 +116,18 @@ function updateAdminByUsername($username, $data) {
     $email = $data['email'] ?? $existing['email'];
     $phone = $data['phone_number'] ?? $existing['phone_number'];
 
-    $stmt = $conn->prepare("UPDATE admin SET username = ?, email = ?, phone_number = ? WHERE username = ?");
+    $stmt = $mysqli->prepare("UPDATE admin SET username = ?, email = ?, phone_number = ? WHERE username = ?");
     $stmt->bind_param("ssss", $newUsername, $email, $phone, $username);
     $stmt->execute();
 
     echo json_encode(['message' => 'Admin updated successfully.']);
     $stmt->close();
 }
-function updateAdminById($id, $data) {
-    global $conn;
 
-    // Check if admin with this ID exists
-    $stmt = $conn->prepare("SELECT * FROM admin WHERE id = ?");
+function updateAdminById($id, $data) {
+    global $mysqli;
+
+    $stmt = $mysqli->prepare("SELECT * FROM admin WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $existing = $stmt->get_result()->fetch_assoc();
@@ -140,13 +139,11 @@ function updateAdminById($id, $data) {
         return;
     }
 
-    // Apply updates or keep old values
     $username = $data['username'] ?? $existing['username'];
     $email = $data['email'] ?? $existing['email'];
     $phone = $data['phone_number'] ?? $existing['phone_number'];
 
-    // Update the admin
-    $stmt = $conn->prepare("UPDATE admin SET username = ?, email = ?, phone_number = ? WHERE id = ?");
+    $stmt = $mysqli->prepare("UPDATE admin SET username = ?, email = ?, phone_number = ? WHERE id = ?");
     $stmt->bind_param("sssi", $username, $email, $phone, $id);
     $stmt->execute();
 
@@ -154,12 +151,11 @@ function updateAdminById($id, $data) {
     $stmt->close();
 }
 
-
 // ✅ Delete admin
 function deleteAdminByUsername($username) {
-    global $conn;
+    global $mysqli;
 
-    $stmt = $conn->prepare("DELETE FROM admin WHERE username = ?");
+    $stmt = $mysqli->prepare("DELETE FROM admin WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
 
@@ -172,12 +168,13 @@ function deleteAdminByUsername($username) {
 
     $stmt->close();
 }
+
 // ✅ Delete admin by ID
 function deleteAdminById($id) {
-    global $conn;
+    global $mysqli;
 
-    $stmt = $conn->prepare("DELETE FROM admin WHERE id = ?");
-    $stmt->bind_param("i", $id); // "i" for integer
+    $stmt = $mysqli->prepare("DELETE FROM admin WHERE id = ?");
+    $stmt->bind_param("i", $id);
     $stmt->execute();
 
     if ($stmt->affected_rows === 0) {
@@ -190,23 +187,6 @@ function deleteAdminById($id) {
     $stmt->close();
 }
 
-
-
-// ✅ Entry point logic
-// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//     $action = $_GET['action'] ?? '';
-//     $input = json_decode(file_get_contents('php://input'), true);
-
-//     if ($action === 'signup') {
-//         signUpAdmin($input);
-//     } else {
-//         http_response_code(400);
-//         echo json_encode(['message' => 'Invalid action']);
-//     }
-// } else {
-//     http_response_code(405);
-//     echo json_encode(['message' => 'Method Not Allowed']);
-// }
 // ✅ Entry point logic
 $action = $_GET['action'] ?? '';
 $method = $_SERVER['REQUEST_METHOD'];
@@ -223,7 +203,7 @@ if ($method === 'POST') {
         echo json_encode(['message' => 'Invalid POST action']);
     }
 
-}elseif ($method === 'GET') {
+} elseif ($method === 'GET') {
     if ($action === 'getAll') {
         getAllAdmins();
     } elseif ($action === 'get') {
@@ -256,7 +236,6 @@ if ($method === 'POST') {
         echo json_encode(['message' => 'Invalid PUT action']);
     }
 
-
 } elseif ($method === 'DELETE') {
     if ($action === 'delete') {
         if (isset($_GET['username'])) {
@@ -275,4 +254,3 @@ if ($method === 'POST') {
     http_response_code(405);
     echo json_encode(['message' => 'Method Not Allowed']);
 }
-

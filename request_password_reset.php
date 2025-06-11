@@ -5,23 +5,27 @@ use PHPMailer\PHPMailer\Exception;
 require 'database.php';
 require 'vendor/autoload.php'; // PHPMailer autoload
 
-// ✅ Handle dynamic CORS origins
-$allowed_origins = ['http://127.0.0.1:5501', 'http://localhost:5501'];
+// ✅ CORS SETUP
+$allowed_origins = [
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
+    'http://127.0.0.1:5501',
+    'http://localhost:5501'
+];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
 }
-
-// ✅ Handle CORS headers
 header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-// ✅ Handle preflight request
+// ✅ Preflight request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
+// ✅ JSON response
 header('Content-Type: application/json');
 
 // ✅ Only allow POST
@@ -62,7 +66,7 @@ $updateStmt = $mysqli->prepare("UPDATE admin SET reset_token = ?, reset_token_ex
 $updateStmt->bind_param("ssi", $token, $expiry, $admin_id);
 $updateStmt->execute();
 
-// ✅ Create reset link
+// ✅ Create reset link (update to match your frontend)
 $resetLink = "http://127.0.0.1:5501/ResetPassword.html?token=$token";
 
 // ✅ Send email with PHPMailer

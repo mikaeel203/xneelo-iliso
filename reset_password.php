@@ -2,7 +2,7 @@
 require 'database.php';
 
 // ✅ Dynamic CORS support
-$allowed_origins = ['http://127.0.0.1:5501', 'http://localhost:5501'];
+$allowed_origins = ['http://127.0.0.1:5500', 'http://localhost:5500'];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
