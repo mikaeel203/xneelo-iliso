@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Page</title>
+  <link rel="stylesheet" href="Styles.css" />
+  <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="login-container">
+    <form id="login-form" class="login-card">
+      <div class="top-logo">
+        <img class="logo" src="assets/Logo.png" />
+        <h2 class="title">Log in</h2>
+      </div>
+      <p class="subtitle">Youth is 37% of South Africa, but 100% of its future</p>
+      <div class="input-container">
+        <div class="input-group">
+          <i class='bx  bx-user-circle'></i> 
+          <input type="text" id="userId" placeholder="Admin ID" required />
+        </div>
+        <div class="input-group">
+          <i class='bx  bx-key-alt'></i> 
+          <input type="password" id="password" placeholder="Password" required />
+        </div>
+      </div>
+      <div class="remember-me">
+        <label>
+          <input type="checkbox" id="rememberMe" /> Remember me
+        </label>
+      </div>
+      <button type="submit" class="login-button">Login</button>
+      <div id="error-message" class="error-message"></div>
+      <p class="forgot-link">
+        <a href="ForgotPassword.html">Forgot Password?</a>
+      </p>
+    </form>
+  </div>
+  <div class="loader-overlay" id="loaderOverlay">
+    <div class="loader-card">
+      <p>Logging In...</p>
+    </div>
+  </div>
+  <script src="Login.js"></script>
+</body>
+</html>
