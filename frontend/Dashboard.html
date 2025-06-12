@@ -100,27 +100,76 @@
       
       </aside>
 
-      <!-- ✍️ Admin Application Chamber -->
-      <div class="modal-overlay" id="adminModal" style="display: none">
-        <div class="modal-content">
-          <form action="" method="post">
-            <h2>Add Admin</h2>
-            <input type="text" placeholder="Employee Name" id="adminName" />
-            <input type="text" placeholder="Employee ID" id="adminId" />
-            <select name="Dept" id="adminDept">
-              <option value="" selected>Select Department</option>
-              <option value="hr">HR</option>
-              <option value="sales-force">Sales Force</option>
-              <option value="Academy">Academy</option>
-              <option value="lc-studio">LC Studio</option>
-            </select>
-            <div class="button-group">
-              <button id="submitadmin">Submit</button>
-              <button id="canceladmin">Cancel</button>
-            </div>
-          </form>
-        </div>
+<!-- ✍🏼 Admin Application Chamber -->
+<div class="modal-overlay" id="adminModal" style="display: none">
+  <div class="modal-content">
+    <form id="adminForm">
+      <h2>Add Admin</h2>
+      <input type="text" placeholder="Username" id="adminName" required />
+      <input type="text" placeholder="Email" id="adminEmail" required />
+      <input type="tel" placeholder="Phone_number" id="adminNumber" required />
+      <input type="password" placeholder="Password" id="adminPassword" required />
+      <input type="password" name="adminMainPassword" placeholder="Main Password" id="adminMainPassword" required>
+      <div class="button-group">
+        <button type="submit" id="submitadmin">Submit</button>
+        <button type="button" id="canceladmin">Cancel</button>
       </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById('adminForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const formData = {
+        username: document.getElementById('adminName').value,
+        email: document.getElementById('adminEmail').value,
+        phone_number: document.getElementById('adminNumber').value,
+        password: document.getElementById('adminPassword').value,
+        mainAdminPassword: document.getElementById('adminMainPassword').value
+    };
+
+    console.log("Form data to send:", formData);
+
+    try {
+        const response = await fetch('http://localhost/xneelo-iliso/user.php?action=signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            throw new Error(`Server returned non-JSON: ${text.substring(0, 100)}...`);
+        }
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message || 'Unknown server error');
+        }
+
+        const result = await response.json();
+        alert('✅ ' + result.message);
+        document.getElementById('adminForm').reset();
+        document.getElementById('adminModal').style.display = 'none';
+        
+    } catch (error) {
+        console.error('Fetch error:', error);
+        alert('❌ Error: ' + error.message);
+    }
+});
+
+
+  // Cancel button handler
+  document.getElementById('canceladmin').addEventListener('click', function () {
+    document.getElementById('adminModal').style.display = 'none';
+  });
+</script>
 
       <!-- 🧑‍💼 Employee Entry Portal -->
       <div class="modal-overlay" id="employeeModal" style="display: none">

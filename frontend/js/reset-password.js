@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       const response = await fetch(
-        "http://localhost/attendance/Backend/reset_password.php",
+        "http://127.0.0.1/xneelo-iliso/reset_password.php",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
