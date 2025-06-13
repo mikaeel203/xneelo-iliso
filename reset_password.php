@@ -1,6 +1,6 @@
 <?php
-require_once 'config.php';      // For any constants you use, e.g. DB config
-require_once 'database.php';    // $mysqli connection
+require_once 'config.php';
+require_once 'database.php'; // $conn connection
 
 // --- CORS Setup ---
 $allowed_origins = [
@@ -19,20 +19,17 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
-// --- Handle OPTIONS preflight ---
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// --- Only allow POST ---
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(["error" => "Invalid request method. Only POST allowed."]);
     exit;
 }
 
-// --- Read JSON input ---
 $input = json_decode(file_get_contents('php://input'), true);
 $token = $input['token'] ?? '';
 $new_password = $input['newPassword'] ?? '';
@@ -43,8 +40,8 @@ if (!$token || !$new_password) {
     exit;
 }
 
-// --- Find admin by reset token ---
-$stmt = $mysqli->prepare("SELECT id, reset_token_expiry FROM admin WHERE reset_token = ?");
+global $conn;
+$stmt = $conn->prepare("SELECT id, reset_token_expiry FROM admin WHERE reset_token = ?");
 if (!$stmt) {
     http_response_code(500);
     echo json_encode(["error" => "Database error: failed to prepare statement."]);
@@ -65,7 +62,6 @@ if ($stmt->num_rows !== 1) {
 $stmt->bind_result($admin_id, $reset_token_expiry);
 $stmt->fetch();
 
-// --- Check if token expired ---
 if (strtotime($reset_token_expiry) < time()) {
     http_response_code(400);
     echo json_encode(["error" => "Token expired."]);
@@ -74,10 +70,9 @@ if (strtotime($reset_token_expiry) < time()) {
 }
 $stmt->close();
 
-// --- Hash new password and update admin record ---
 $hashedPassword = password_hash($new_password, PASSWORD_DEFAULT);
 
-$updateStmt = $mysqli->prepare("UPDATE admin SET password_hash = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?");
+$updateStmt = $conn->prepare("UPDATE admin SET password_hash = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?");
 if (!$updateStmt) {
     http_response_code(500);
     echo json_encode(["error" => "Database error: failed to prepare update statement."]);
@@ -96,4 +91,4 @@ if ($success) {
     echo json_encode(["error" => "Failed to update password."]);
 }
 
-$mysqli->close();
+$conn->close();

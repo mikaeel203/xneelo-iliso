@@ -3,7 +3,7 @@
 
 // Set CORS headers for the frontend origin.
 // Make sure this matches the origin of your frontend (e.g., http://127.0.0.1:5501).
-header("Access-Control-Allow-Origin: httpS://127.0.0.1:5500");
+header("Access-Control-Allow-Origin: httpS://127.0.0.1:5501");
 
 // Allow common HTTP methods for potential future expansion or consistency.
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -33,7 +33,7 @@ echo json_encode([
         "PUT /user.php?action=update&username={username}" => "Update admin details by username",
         "PUT /user.php?action=update&id={id}" => "Update admin details by ID",
         "DELETE /user.php?action=delete&id={id}" => "Delete an admin by ID",
-        "DELETE /user.php?action=delete&username={username}" => "Delete an admin by username"
+        "DELETE /user.php?action=delete&username={username}" => "Delete an admin by username",
+        "POST/login.php?action=login" => "Admin Login"
     ]
 ]);
-?>

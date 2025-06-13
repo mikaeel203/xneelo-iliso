@@ -3,9 +3,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once 'config.php';      // For EMAIL_USER, EMAIL_PASS, etc.
-require_once 'database.php';    // $mysqli connection
-require_once 'vendor/autoload.php'; // PHPMailer autoload
+require_once 'config.php';
+require_once 'database.php'; // $conn connection
+require_once 'vendor/autoload.php';
 
 // --- CORS Setup ---
 $allowed_origins = [
@@ -24,20 +24,17 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
-// --- Handle Preflight OPTIONS ---
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// --- Only allow POST ---
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Method Not Allowed
+    http_response_code(405);
     echo json_encode(["error" => "Invalid request method. Only POST allowed."]);
     exit;
 }
 
-// --- Decode JSON input ---
 $data = json_decode(file_get_contents('php://input'), true);
 $email = $data['email'] ?? '';
 
@@ -47,8 +44,8 @@ if (!$email) {
     exit;
 }
 
-// --- Check if admin email exists ---
-$stmt = $mysqli->prepare("SELECT id FROM admin WHERE email = ?");
+global $conn;
+$stmt = $conn->prepare("SELECT id FROM admin WHERE email = ?");
 if (!$stmt) {
     http_response_code(500);
     echo json_encode(["error" => "Database error: failed to prepare statement."]);
@@ -70,12 +67,10 @@ $stmt->bind_result($admin_id);
 $stmt->fetch();
 $stmt->close();
 
-// --- Generate reset token and expiry ---
 $token = bin2hex(random_bytes(32));
 $expiry = date("Y-m-d H:i:s", strtotime('+1 hour'));
 
-// --- Store token in DB ---
-$updateStmt = $mysqli->prepare("UPDATE admin SET reset_token = ?, reset_token_expiry = ? WHERE id = ?");
+$updateStmt = $conn->prepare("UPDATE admin SET reset_token = ?, reset_token_expiry = ? WHERE id = ?");
 if (!$updateStmt) {
     http_response_code(500);
     echo json_encode(["error" => "Database error: failed to prepare update statement."]);
@@ -86,10 +81,8 @@ $updateStmt->bind_param("ssi", $token, $expiry, $admin_id);
 $updateStmt->execute();
 $updateStmt->close();
 
-// --- Create reset link (adjust frontend URL accordingly) ---
-$resetLink = "http://127.0.0.1:5500/frontend/ResetPassword.html?token=$token";
+$resetLink = "http://127.0.0.1:5500/frontend/ResetPassword.html?token=$token&email=$email";
 
-// --- Send email using PHPMailer ---
 $mail = new PHPMailer(true);
 
 try {
@@ -98,8 +91,22 @@ try {
     $mail->SMTPAuth   = true;
     $mail->Username   = EMAIL_USER;
     $mail->Password   = EMAIL_PASS;
+
+    // Use either of these:
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port       = 587;
+
+    // Or:
+    // $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+    // $mail->Port       = 465;
+
+    $mail->SMTPOptions = [
+        'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true,
+        ],
+    ];
 
     $mail->setFrom(EMAIL_USER, 'Attendance System');
     $mail->addAddress($email);
@@ -117,5 +124,5 @@ try {
     echo json_encode(["error" => "Mailer Error: {$mail->ErrorInfo}"]);
 }
 
-// --- Close DB connection ---
-$mysqli->close();
+
+$conn->close();
