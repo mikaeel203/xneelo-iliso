@@ -3,7 +3,7 @@
 
 // Set CORS headers for the frontend origin.
 // Make sure this matches the origin of your frontend (e.g., http://127.0.0.1:5501).
-header("Access-Control-Allow-Origin: httpS://127.0.0.1:5501");
+header("Access-Control-Allow-Origin: httpS://127.0.0.1:5500");
 
 // Allow common HTTP methods for potential future expansion or consistency.
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
