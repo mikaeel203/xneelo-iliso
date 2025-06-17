@@ -1,1559 +1,1207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        /* CSS Variables for theming */
-        :root {
-            --sidebar-bg: #FFFFFF;
-            --main-bg: #F1F5F9;
-            --panel-bg: #FFFFFF;
-            --primary-blue: #2563EB;
-            --primary-blue-dark: #1D4ED8;
-            --text-primary: #1E293B;
-            --text-secondary: #64748B;
-            --text-light: #E2E8F0;
-            --border-color: #E2E8F0;
-            --status-on: #10B981;
-            --status-on-bg: #D1FAE5;
-            --status-off: #EF4444;
-            --status-off-bg: #FEE2E2;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-
-        /* Dark mode styles */
-        body.dark {
-            --sidebar-bg: #020617;
-            --main-bg: #0F172A;
-            --panel-bg: #1E293B;
-            --text-primary: #F1F5F9;
-            --text-secondary: #94A3B8;
-            --border-color: #334155;
-        }
-
-        /* Global reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--main-bg);
-            color: var(--text-primary);
-            transition: background-color 0.3s, color 0.3s;
-            overflow: hidden;
-        }
-
-        .dashboard-container {
-            display: flex;
-            height: 100vh;
-        }
-
-        /* Sidebar styles */
-        .sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            color: var(--text-primary);
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem;
-            transition: width 0.3s;
-            border-right: 1px solid var(--border-color);
-        }
-
-        .sidebar-header {
-            margin-bottom: 2rem;
-            padding-left: 0.75rem;
-        }
-
-        .sidebar-nav {
-            flex-grow: 1;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            background-color: var(--primary-blue-dark);
-            color: #FFFFFF;
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        .nav-item:hover {
-            background-color: var(--primary-blue);
-        }
-
-        .nav-item svg {
-            margin-right: 0.75rem;
-        }
-
-        .nav-item span {
-            flex-grow: 1;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .user-profile svg {
-            color: var(--text-secondary);
-            margin-left: auto;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 0.75rem;
-        }
-
-        .user-info {
-            flex-grow: 1;
-        }
-
-        .user-name {
-            display: block;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .user-role {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        #logoutButton {
-            justify-content: center;
-            padding: 0.8rem;
-            text-align: center;
-        }
-
-        /* Modal overlay for pop-ups */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        /* General modal content styles */
-        .modal-content {
-            background: #f8f9fb;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-            width: 400px;
-            max-width: 90%;
-            padding: 2rem 2.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .modal-content h2 {
-            margin: 0 0 1rem 0;
-            font-weight: 700;
-            color: #0f4392;
-            text-align: center;
-        }
-
-        .modal-content input,
-        .modal-content select { /* Added select to modal inputs */
-            padding: 0.6rem 1rem;
-            border: 1.5px solid #f8f9fb;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .modal-content input:focus,
-        .modal-content select:focus { /* Added select to modal inputs */
-            outline: none;
-            border-color: #0f4392;
-            box-shadow: 0 0 5px #004aad66;
-        }
-
-        /* Panic button styles */
-        .panic-button-container {
-            position: fixed;
-            top: 40px;
-            right: 20px;
-            z-index: 999;
-        }
-
-        .panic-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 120px;
-            height: 50px;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            overflow: hidden;
-            background-color: transparent; /* Always transparent for the button itself */
-        }
-
-        /* Toggle switch within panic button */
-        .panic-button .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 28px;
-            border-radius: 20px;
-            background-color: lightgray; /* Gray when off */
-            transition: background-color 0.3s ease;
-        }
-
-        .panic-button.on .toggle-switch {
-            background-color: #f51313; /* Red when on */
-        }
-
-        .panic-button .toggle-switch::before {
-            content: "";
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: #fff; /* White circle within the buttons */
-            transition: transform 0.3s ease;
-        }
-
-        .panic-button.on .toggle-switch::before {
-            transform: translateX(14px); /* Move circle to the right when on */
-        }
-
-        /* Panic button confirmation modal styles */
-        #panic-confirmation-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        /* Warning section within panic modal */
-        .warning-section {
-            background-color: #fff5cd;
-            border-left: 5px solid #ff9f43;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-radius: 6px;
-        }
-
-        .warning-section i {
-            font-size: 20px;
-            color: #ff9f43;
-        }
-
-        .warning-section span {
-            font-weight: bold;
-            color: #ff9f43;
-        }
-
-        .warning-section p {
-            font-size: 14px;
-            color: #333;
-            margin: 0;
-            flex-grow: 1;
-        }
-
-        /* Logout button styles */
-        .logout-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 0.75rem;
-            background-color: var(--primary-blue-dark);
-            color: #FFFFFF;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .logout-btn:hover {
-            background-color: var(--primary-blue);
-        }
-
-        /* Logout confirmation modal specific styles */
-        .logout-modal {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 300px;
-            margin: auto;
-        }
-
-        .logout-modal p {
-            margin-bottom: 1rem;
-            font-weight: bold;
-        }
-
-        #confirmLogoutBtn {
-            background-color: #ea1c1f;
-            font-size: 13px;
-        }
-
-        #cancelLogoutBtn {
-            background-color: #ccc;
-        }
-
-        #confirmLogoutBtn:hover {
-            background-color: #ff0307;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        #cancelLogoutBtn:hover {
-            background-color: #b3b3b3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Shared button group styles for modals */
-        .button-group {
-            display: flex;
-            padding: 20px;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .button-group button {
-            flex: 1;
-            padding: 0.75rem 1.2rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-
-        .button-group button:first-of-type {
-            background-color: #004aad;
-            color: #f8f9fb;
-        }
-
-        .button-group button:last-of-type {
-            background-color: #f8f9fb;
-            color: #1f1f1f;
-        }
-
-        /* Mobile navigation styles */
-        .mobile-nav {
-            position: fixed;
-            top: 0;
-            left: -100%; /* Hidden by default */
-            width: 280px;
-            height: 100%;
-            background-color: var(--sidebar-bg);
-            z-index: 1001;
-            transition: left 0.3s ease-in-out;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .mobile-nav.open {
-            left: 0; /* Slide in when open */
-        }
-
-        .mobile-nav .nav-item {
-            background-color: transparent;
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        body.dark .mobile-nav .nav-item {
-            color: var(--text-light);
-        }
-
-        /* Overlay for mobile nav when open */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-
-        .overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Main content area */
-        .main-content {
-            flex-grow: 1;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            max-height: 100vh;
-        }
-
-        .main-header {
-            margin-bottom: 2rem;
-            flex-shrink: 0;
-        }
-
-        .my-img {
-            display: none; /* Hidden on desktop */
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .welcome-message {
-            flex-grow: 1;
-        }
-
-        .welcome-message h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .welcome-message p {
-            color: var(--text-secondary);
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .mobile-logo,
-        .hamburger-btn {
-            display: none; /* Hidden on desktop */
-        }
-
-        /* Content panel (main dashboard area) */
-        .content-panel {
-            background-color: var(--panel-bg);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            transition: background-color 0.3s;
-            overflow: hidden;
-        }
-
-        .mobile-user-profile {
-            display: none; /* Hidden on desktop */
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .panel-header-left {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .panel-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .panel-date {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .panel-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            background-color: var(--main-bg);
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-        }
-
-        .search-box svg {
-            color: var(--text-secondary);
-            margin-right: 0.5rem;
-        }
-
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-
-        .sort-box {
-            display: flex;
-            align-items: center;
-            color: var(--text-secondary);
-        }
-
-        .sort-box select {
-            border: none;
-            background: transparent;
-            outline: none;
-            color: var(--text-primary);
-            font-weight: 500;
-            font-size: 1rem;
-            margin-left: 0.5rem;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            padding-right: 1rem;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748B' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.2rem center;
-            background-repeat: no-repeat;
-            background-size: 1.25em 1.25em;
-        }
-
-        .add-employee-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            background-color: var(--primary-blue-dark);
-            color: #FFFFFF;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .add-employee-btn:hover {
-            background-color: var(--primary-blue);
-        }
-
-        .add-employee-btn svg:last-child {
-            display: none; /* Hide on desktop, shown on mobile */
-        }
-
-        /* Table styles */
-        .table-container {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 1rem;
-            text-align: left;
-            font-size: 0.875rem;
-        }
-
-        thead {
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            background-color: var(--panel-bg);
-            z-index: 1;
-        }
-
-        th {
-            color: var(--text-secondary);
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        td {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            display: inline-block;
-        }
-
-        .status-on {
-            color: var(--status-on);
-            background-color: var(--status-on-bg);
-        }
-
-        .status-off {
-            color: var(--status-off);
-            background-color: var(--status-off-bg);
-        }
-
-        /* Panel footer (pagination) */
-        .panel-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1.5rem;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            flex-shrink: 0;
-        }
-
-        .pagination-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .pagination-controls button {
-            width: 32px;
-            height: 32px;
-            border-radius: 0.375rem;
-            border: 1px solid var(--border-color);
-            background-color: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        .pagination-controls button:hover {
-            background-color: var(--main-bg);
-        }
-
-        .pagination-controls button.active {
-            background-color: var(--primary-blue);
-            color: #FFFFFF;
-            border-color: var(--primary-blue);
-        }
-
-        .pagination-controls span {
-            padding: 0 0.5rem;
-        }
-
-        /* Main application footer */
-        .main-footer {
-            text-align: center;
-            padding-top: 1.5rem;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            flex-shrink: 0;
-        }
-
-        /* Media queries for responsiveness */
-        @media (max-width: 1024px) {
-
-            /* Hide sidebar on smaller screens */
-            .sidebar {
-                display: none;
-            }
-
-            .main-content {
-                padding: 1rem;
-            }
-
-            .main-header {
-                margin-bottom: 1rem;
-            }
-
-            .header-top {
-                margin-bottom: 1rem;
-            }
-
-            /* Show logo in header for mobile */
-            .my-img {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .panic-button {
-                display: flex;
-                justify-content: flex-end;
-                width: 100%;
-            }
-
-            .welcome-message {
-                flex-grow: 1;
-                text-align: center;
-            }
-
-            .welcome-message h1 {
-                font-size: 1.5rem;
-            }
-
-            .welcome-message p {
-                display: none;
-            }
-
-            .mobile-logo {
-                display: block;
-            }
-
-            body.dark .mobile-logo text {
-                fill: var(--text-light);
-            }
-
-            body.dark .mobile-logo path {
-                stroke: var(--text-light);
-            }
-
-            /* Show hamburger button for mobile nav */
-            .hamburger-btn {
-                display: block;
-                background: none;
-                border: none;
-                color: var(--text-primary);
-                cursor: pointer;
-            }
-
-            body.dark .hamburger-btn {
-                color: var(--text-light);
-            }
-
-            .header-controls {
-                gap: 1rem;
-            }
-
-            .toggle-switch {
-                order: 2;
-            }
-
-            .hamburger-btn {
-                order: 1;
-            }
-
-            .mobile-user-profile {
-                display: flex;
-                align-items: center;
-                margin-bottom: 1rem;
-            }
-
-            .mobile-user-profile .user-profile {
-                margin-bottom: 0;
-                padding: 0;
-            }
-
-            .panel-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .panel-header-left {
-                width: 100%;
-                margin-bottom: 1rem;
-            }
-
-            .panel-date {
-                display: block;
-            }
-
-            .panel-controls {
-                width: 100%;
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .search-box,
-            .sort-box,
-            .add-employee-btn {
-                width: 100%;
-            }
-
-            .sort-box {
-                display: flex;
-                justify-content: space-between;
-                background-color: var(--main-bg);
-                padding: 0.5rem 0.75rem;
-                border-radius: 0.5rem;
-            }
-
-            .add-employee-btn {
-                padding: 0.75rem;
-            }
-
-            .add-employee-btn span {
-                flex-grow: 1;
-                text-align: left;
-            }
-
-            .add-employee-btn svg:last-child {
-                display: block;
-            }
-
-            /* Table responsive adjustments (stacking rows) */
-            .table-container {
-                overflow-x: hidden;
-            }
-
-            table,
-            thead,
-            tbody,
-            th,
-            td,
-            tr {
-                display: block;
-            }
-
-            thead {
-                display: none;
-            }
-
-            tr {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 1rem 0;
-            }
-
-            tbody tr:not(:last-child) {
-                border-bottom: 1px solid var(--border-color);
-            }
-
-            td {
-                padding: 0;
-                border: none;
-            }
-
-            /* Hide some columns on mobile */
-            td:nth-child(2),
-            td:nth-child(3),
-            td:nth-child(4),
-            td:nth-child(5) {
-                display: none;
-            }
-
-            .panel-footer {
-                flex-direction: column;
-                gap: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables for theming */
+    :root {
+      --sidebar-bg: #FFFFFF;
+      --main-bg: #F1F5F9;
+      --panel-bg: #FFFFFF;
+      --primary-blue: #2563EB;
+      --primary-blue-dark: #1D4ED8;
+      --text-primary: #1E293B;
+      --text-secondary: #64748B;
+      --text-light: #E2E8F0;
+      --border-color: #E2E8F0;
+      --status-on: #10B981;
+      --status-on-bg: #D1FAE5;
+      --status-off: #EF4444;
+      --status-off-bg: #FEE2E2;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    /* Dark mode styles */
+    body.dark {
+      --sidebar-bg: #020617;
+      --main-bg: #0F172A;
+      --panel-bg: #1E293B;
+      --text-primary: #F1F5F9;
+      --text-secondary: #94A3B8;
+      --border-color: #334155;
+    }
+
+    /* Global reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--main-bg);
+      color: var(--text-primary);
+      transition: background-color 0.3s, color 0.3s;
+      overflow: hidden;
+    }
+
+    .dashboard-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Sidebar styles */
+    .sidebar {
+      width: 260px;
+      background-color: var(--sidebar-bg);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      transition: width 0.3s;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .sidebar-header {
+      margin-bottom: 2rem;
+      padding-left: 0.75rem;
+    }
+
+    .sidebar-nav {
+      flex-grow: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      background-color: #0F4392 ;
+      color: #FFFFFF;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .nav-item:hover {
+      background-color: #0F4378;
+    }
+
+    .nav-item svg {
+      margin-right: 0.75rem;
+    }
+
+    .nav-item span {
+      flex-grow: 1;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .user-profile svg {
+      color: var(--text-secondary);
+      margin-left: auto;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 0.75rem;
+    }
+
+    .user-info {
+      flex-grow: 1;
+    }
+
+    .user-name {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .user-role {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    #logoutButton {
+      justify-content: center;
+      padding: 0.8rem;
+      text-align: center;
+    }
+
+    /* Modal overlay for pop-ups */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    /* General modal content styles */
+    .modal-content {
+      background: #f8f9fb;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      width: 400px;
+      max-width: 90%;
+      padding: 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal-content h2 {
+      margin: 0 0 1rem 0;
+      font-weight: 700;
+      color: #0f4392;
+      text-align: center;
+    }
+
+    .modal-content input,
+    .modal-content select {
+      padding: 0.6rem 1rem;
+      border: 1.5px solid #f8f9fb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .modal-content input:focus,
+    .modal-content select:focus {
+      outline: none;
+      border-color: #0f4392;
+      box-shadow: 0 0 5px #004aad66;
+    }
+
+    /* Panic button styles */
+    .panic-button-container {
+      position: fixed;
+      top: 40px;
+      right: 20px;
+      z-index: 999;
+    }
+
+    .panic-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 50px;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      background-color: transparent;
+    }
+
+    .panic-button .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 28px;
+      border-radius: 20px;
+      background-color: lightgray;
+      transition: background-color 0.3s ease;
+    }
+
+    .panic-button.on .toggle-switch {
+      background-color: #f51313;
+    }
+
+    .panic-button .toggle-switch::before {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #fff;
+      transition: transform 0.3s ease;
+    }
+
+    .panic-button.on .toggle-switch::before {
+      transform: translateX(14px);
+    }
+
+    /* Logout button styles */
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--primary-blue-dark);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .logout-btn:hover {
+      background-color: var(--primary-blue);
+    }
+
+    /* Shared button group styles for modals */
+    .button-group {
+      display: flex;
+      padding: 20px;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .button-group button {
+      flex: 1;
+      padding: 0.75rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .button-group button:first-of-type {
+      background-color: #004aad;
+      color: #f8f9fb;
+    }
+
+    .button-group button:last-of-type {
+      background-color: #f8f9fb;
+      color: #1f1f1f;
+    }
+
+    /* Mobile navigation styles */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 280px;
+      height: 100%;
+      background-color: var(--sidebar-bg);
+      z-index: 1001;
+      transition: left 0.3s ease-in-out;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-nav.open {
+      left: 0;
+    }
+
+    .mobile-nav .nav-item {
+      background-color: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    body.dark .mobile-nav .nav-item {
+      color: var(--text-light);
+    }
+
+    /* Overlay for mobile nav when open */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Main content area */
+    .main-content {
+      flex-grow: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      max-height: 100vh;
+    }
+
+    .main-header {
+      margin-bottom: 2rem;
+      flex-shrink: 0;
+    }
+
+    .my-img {
+      display: none;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .welcome-message {
+      flex-grow: 1;
+    }
+
+    .welcome-message h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .welcome-message p {
+      color: var(--text-secondary);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .mobile-logo,
+    .hamburger-btn {
+      display: none;
+    }
+
+    /* Content panel (main dashboard area) */
+    .content-panel {
+      background-color: var(--panel-bg);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s;
+      overflow: hidden;
+    }
+
+    .mobile-user-profile {
+      display: none;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .panel-header-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .panel-date {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .panel-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background-color: var(--main-bg);
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+    }
+
+    .search-box svg {
+      color: var(--text-secondary);
+      margin-right: 0.5rem;
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 1rem;
+    }
+
+    .sort-box {
+      display: flex;
+      align-items: center;
+      color: var(--text-secondary);
+    }
+
+    .sort-box select {
+      border: none;
+      background: transparent;
+      outline: none;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 1rem;
+      margin-left: 0.5rem;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      padding-right: 1rem;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748B' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.2rem center;
+      background-repeat: no-repeat;
+      background-size: 1.25em 1.25em;
+    }
+
+    .add-employee-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background-color: var(--primary-blue-dark);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .add-employee-btn:hover {
+      background-color: var(--primary-blue);
+    }
+
+    .add-employee-btn svg:last-child {
+      display: none;
+    }
+
+    /* Table styles */
+    .table-container {
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 1rem;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    thead {
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      background-color: var(--panel-bg);
+      z-index: 1;
+    }
+
+    th {
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    td {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      display: inline-block;
+    }
+
+    .status-on {
+      color: var(--status-on);
+      background-color: var(--status-on-bg);
+    }
+
+    .status-off {
+      color: var(--status-off);
+      background-color: var(--status-off-bg);
+    }
+
+    /* Panel footer (pagination) */
+    .panel-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .pagination-controls button {
+      width: 32px;
+      height: 32px;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border-color);
+      background-color: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .pagination-controls button:hover {
+      background-color: var(--main-bg);
+    }
+
+    .pagination-controls button.active {
+      background-color: var(--primary-blue);
+      color: #FFFFFF;
+      border-color: var(--primary-blue);
+    }
+
+    .pagination-controls span {
+      padding: 0 0.5rem;
+    }
+
+    /* Main application footer */
+    .main-footer {
+      text-align: center;
+      padding-top: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .main-header {
+        margin-bottom: 1rem;
+      }
+
+      .header-top {
+        margin-bottom: 1rem;
+      }
+
+      .my-img {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .panic-button {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+      }
+
+      .welcome-message {
+        flex-grow: 1;
+        text-align: center;
+      }
+
+      .welcome-message h1 {
+        font-size: 1.5rem;
+      }
+
+      .welcome-message p {
+        display: none;
+      }
+
+      .mobile-logo {
+        display: block;
+      }
+
+      .hamburger-btn {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+      }
+
+      .header-controls {
+        gap: 1rem;
+      }
+
+      .toggle-switch {
+        order: 2;
+      }
+
+      .hamburger-btn {
+        order: 1;
+      }
+
+      .mobile-user-profile {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .mobile-user-profile .user-profile {
+        margin-bottom: 0;
+        padding: 0;
+      }
+
+      .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .panel-header-left {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      .panel-date {
+        display: block;
+      }
+
+      .panel-controls {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .search-box,
+      .sort-box,
+      .add-employee-btn {
+        width: 100%;
+      }
+
+      .sort-box {
+        display: flex;
+        justify-content: space-between;
+        background-color: var(--main-bg);
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+      }
+
+      .add-employee-btn {
+        padding: 0.75rem;
+      }
+
+      .add-employee-btn span {
+        flex-grow: 1;
+        text-align: left;
+      }
+
+      .add-employee-btn svg:last-child {
+        display: block;
+      }
+
+      .table-container {
+        overflow-x: hidden;
+      }
+
+      table,
+      thead,
+      tbody,
+      th,
+      td,
+      tr {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+      }
+
+      tbody tr:not(:last-child) {
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      td {
+        padding: 0;
+        border: none;
+      }
+
+      td:nth-child(2),
+      td:nth-child(3),
+      td:nth-child(4),
+      td:nth-child(5) {
+        display: none;
+      }
+
+      .panel-footer {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png" alt="Logo" />
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png" alt="Logo" />
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- Direct Link to Admin Page -->
+        <a href="admin.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span>Admin Dashboard</span>
+        </a>
+
+        <!-- Direct Link to Employee Page -->
+        <a href="employee.html" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span>Employee Dashboard</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png"
+            alt="Profile" class="profile-image" />
+          <div class="user-info">
+            <span class="user-name">Tara Snell</span>
+            <span class="user-role">Administrator</span>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+
+        <div class="modal-overlay" id="logoutModal" style="display: none">
+          <div class="logout-modal">
+            <p>⚠️ Are you sure you want to log out?</p>
+            <div class="button-group">
+              <button id="confirmLogoutBtn">Yes, log me out</button>
+              <button id="cancelLogoutBtn">Cancel</button>
             </div>
+          </div>
+        </div>
 
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item" id="adminButton">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    <span>View Admin</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </a>
+        <button class="logout-btn" id="logoutButton">LOGOUT</button>
+      </div>
+    </aside>
 
-                <div class="modal-overlay" id="adminModal" style="display: none">
-                    <div class="modal-content">
-                        <form id="adminForm">
-                            <h2>Add Admin</h2>
-                            <input type="text" placeholder="Username" id="adminName" required />
-                            <input type="email" placeholder="Email" id="adminEmail" required />
-                            <input type="tel" placeholder="Phone number" id="adminNumber" required />
-                            <input type="password" placeholder="Password" id="adminPassword" required />
-                            <input type="password" placeholder="Main Password" id="adminMainPassword" required />
-                            <div class="button-group">
-                                <button type="submit" id="submitAdmin">Submit</button>
-                                <button type="button" id="cancelAdmin">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <!-- Mobile Nav -->
+    <nav class="mobile-nav">
+      <a href="admin.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+        <span>Admin Dashboard</span>
+      </a>
 
-                <a href="#" class="nav-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    <span>View Employee</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </a>
+      <a href="employee.html" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+        <span>Employee Dashboard</span>
+      </a>
 
-                <div class="modal-overlay" id="employeeModal" style="display: none">
-                    <div class="modal-content">
-                        <form id="employeeForm">
-                            <h2>View Employee</h2>
-                            <input type="text" placeholder="Employee Name" id="employeeName" required />
-                            <select name="Dept" id="empDept" required>
-                                <option value="" selected disabled>Select Department</option>
-                                <option value="hr">HR</option>
-                                <option value="sales-force">Sales Force</option>
-                                <option value="Academy">Academy</option>
-                                <option value="lc-studio">LC Studio</option>
-                            </select>
-                            <input type="email" placeholder="Email" id="email" autocomplete="email" required />
-                            <input type="text" placeholder="Employee ID" id="employeeId" required />
-                            <div class="button-group">
-                                <button type="submit" id="submitEmployee">Submit</button>
-                                <button type="button" id="cancelEmployee">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </nav>
+      <button class="logout-btn" id="mobileLogoutButton">LOGOUT</button>
+    </nav>
 
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png"
-                        alt="Profile" class="profile-image" />
-                    <div class="user-info">
-                        <span class="user-name">Tara Snell</span>
-                        <span class="user-role">Administrator</span>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </div>
+    <div class="overlay"></div>
 
-                <div class="modal-overlay" id="logoutModal" style="display: none">
-                    <div class="logout-modal">
-                        <p>⚠️ Are you sure you want to log out?</p>
-                        <div class="button-group">
-                            <button id="confirmLogoutBtn">Yes, log me out</button>
-                            <button id="cancelLogoutBtn">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="logout-btn" id="logoutButton">
-                    LOGOUT
-                </button>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="main-header">
+        <div class="header-top">
+          <div class="my-img">
+            <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png"
+              alt="Logo" style="height: 35px;" width="100px" />
+          </div>
+          <div class="welcome-message">
+            <h1>Welcome Tara 👋</h1>
+            <p>Here's a quick overview of today's activity</p>
+          </div>
+          <div class="header-controls">
+            <div class="panic-button-container">
+              <button id="panic-button" class="panic-button off">
+                <span class="toggle-switch"></span>
+              </button>
             </div>
-        </aside>
+            <button class="hamburger-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
 
-        <nav class="mobile-nav">
-            <a href="#" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                    <a href="view_employee.html" class="nav-link-button">
-                        <i class="bx bx-group"></i>
-                        <span>View Employee</span>
-                    </a>
-            </a>
-            <a href="#" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                <span>View Employee</span>
-            </a>
-            <button class="logout-btn" id="mobileLogoutButton">LOGOUT</button>
-        </nav>
-        <div class="overlay"></div>
+      <!-- Content Panel -->
+      <section class="content-panel">
+        <div class="mobile-user-profile">
+          <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png"
+            alt="Profile" class="profile-image" />
+          <div class="user-info">
+            <span class="user-name">Tara Snell</span>
+            <span class="user-role">Project Manager</span>
+          </div>
+        </div>
 
-        <main class="main-content">
-            <header class="main-header">
-                <div class="header-top">
-                    <div class="my-img">
-                        <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png"
-                            alt="Logo" style="height: 35px;" width="100px" />
-                    </div>
-                    <div class="welcome-message">
-                        <h1>Welcome Tara 👋</h1>
-                        <p>Here's a quick overview of today's activity</p>
-                    </div>
-                    <div class="header-controls">
-                        <div class="panic-button-container">
-                            <button id="panic-button" class="panic-button off">
-                                <span class="toggle-switch"></span>
-                            </button>
-                        </div>
+<div class="panel-header">
+  <div class="panel-header-left">
+    <h2>Active Employees</h2>
+    <span class="panel-date" id="currentDate"></span>
+  </div>
+          <div class="panel-controls">
+            <div class="search-box">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" placeholder="Search">
+            </div>
+            <div class="sort-box">
+              <label for="sort-by">Sort by :</label>
+              <select id="sort-by">
+                <option value="default">Default</option>
+                <option value="on-site">On Site</option>
+                <option value="off-site">Off Site</option>
+              </select>
+            </div>
+            <button class="add-employee-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              <span>View Employee</span>
+            </button>
+          </div>
+        </div>
 
-                        <div id="panic-confirmation-modal" style="display: none;">
-                            <div class="modal-content">
-                                <h2>Activate Panic Mode</h2>
-                                <p>Are you sure you want to activate the panic mode?</p>
-                                <div class="warning-section">
-                                    <i class="bx bx-error-circle"></i>
-                                    <span>Warning</span>
-                                    <p>This will trigger an alert to all users and emergency systems.</p>
-                                </div>
-                                <div class="button-group">
-                                    <button id="confirm-continue">Continue</button>
-                                    <button id="cancel-panic">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
+        <div class="table-container" id="tableContainer">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Clock In Time</th>
+                <th>Email</th>
+                <th>Employee ID</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTableBody"></tbody>
+          </table>
+        </div>
 
-                        <button class="hamburger-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="3" y1="12" x2="21" y2="12"></line>
-                                <line x1="3" y1="6" x2="21" y2="6"></line>
-                                <line x1="3" y1="18" x2="21" y2="18"></line>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </header>
+        <div class="panel-footer">
+          <div class="pagination-info">
+            Showing data 1 to 8 of 256k entries
+          </div>
+          <div class="pagination-controls">
+            <button>&lt;</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>4</button>
+            <span>...</span>
+            <button>40</button>
+            <button>&gt;</button>
+          </div>
+        </div>
+      </section>
 
-            <section class="content-panel">
-                <div class="mobile-user-profile">
-                    <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png"
-                        alt="Profile" class="profile-image" />
-                    <div class="user-info">
-                        <span class="user-name">Tara Snell</span>
-                        <span class="user-role">Project Manager</span>
-                    </div>
-                </div>
+      <footer class="main-footer">
+        <p>Powered By Iliso</p>
+      </footer>
+    </main>
+  </div>
 
-                <div class="panel-header">
-                    <div class="panel-header-left">
-                        <h2>Active Employees</h2>
-                        <span class="panel-date">30/05/2025</span>
-                    </div>
-                    <div class="panel-controls">
-                        <div class="search-box">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            <input type="text" placeholder="Search">
-                        </div>
-                        <div class="sort-box">
-                            <label for="sort-by">Sort by :</label>
-                            <select id="sort-by">
-                                <option value="default">Default</option>
-                                <option value="on-site">On Site</option>
-                                <option value="off-site">Off Site</option>
-                            </select>
-                        </div>
-                        <button class="add-employee-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                                <circle cx="9" cy="7" r="4" />
-                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </svg>
-                            <span>View Employee</span>
-                        </button>
-                    </div>
-                </div>
+  <script>
+    // JavaScript for dashboard interactivity
+    document.addEventListener('DOMContentLoaded', () => {
+      const employeeTableBody = document.getElementById('employeeTableBody');
+      const searchInput = document.querySelector('.search-box input');
+      const sortBySelect = document.getElementById('sort-by');
+      const dataInfo = document.querySelector('.pagination-info');
+      const paginationControls = document.querySelector('.pagination-controls');
+      const logoutModal = document.getElementById('logoutModal');
+      const panicButton = document.getElementById('panic-button');
+      const hamburgerBtn = document.querySelector('.hamburger-btn');
+      const mobileNav = document.querySelector('.mobile-nav');
+      const overlay = document.querySelector('.overlay');
 
-                <div class="table-container" id="tableContainer">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Employee Name</th>
-                                <th>Department</th>
-                                <th>Clock In Time</th>
-                                <th>Email</th>
-                                <th>Employee ID</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="employeeTableBody">
-                            </tbody>
-                    </table>
-                </div>
+      let currentPage = 1;
+      const pageSize = 8;
+      let allEmployees = [];
+      let filteredEmployees = [];
 
-                <div class="panel-footer">
-                    <div class="pagination-info">
-                        Showing data 1 to 8 of 256k entries
-                    </div>
-                    <div class="pagination-controls">
-                        <button>&lt;</button>
-                        <button class="active">1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>4</button>
-                        <span>...</span>
-                        <button>40</button>
-                        <button>&gt;</button>
-                    </div>
-                </div>
-            </section>
-
-            <footer class="main-footer">
-                <p>Powered By Iliso</p>
-            </footer>
-        </main>
-    </div>
-
-    <script>
-        // JavaScript for dashboard interactivity
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get references to DOM elements
-            const employeeTableBody = document.getElementById('employeeTableBody');
-            const searchInput = document.querySelector('.search-box input');
-            const sortBySelect = document.getElementById('sort-by');
-            const dataInfo = document.querySelector('.pagination-info');
-            const paginationControls = document.querySelector('.pagination-controls');
-            const employeeModal = document.getElementById('employeeModal');
-            const adminModal = document.getElementById('adminModal');
-            const logoutModal = document.getElementById('logoutModal');
-            const panicButton = document.getElementById('panic-button');
-            const hamburgerBtn = document.querySelector('.hamburger-btn');
-            const mobileNav = document.querySelector('.mobile-nav');
-            const overlay = document.querySelector('.overlay');
-            const submitEmployeeButton = document.getElementById('submitEmployee');
-            const cancelEmployeeButton = document.getElementById('cancelEmployee');
-            const submitAdminButton = document.getElementById('submitAdmin');
-            const cancelAdminButton = document.getElementById('cancelAdmin');
-
-            // Pagination variables
-            let currentPage = 1;
-            const pageSize = 8;
-            let allEmployees = []; // Stores all fetched employee data
-            let filteredEmployees = []; // Stores employees after search/sort filters
-
-            // Function to fetch employee data
-            // In a real application, you'd fetch this from a backend API.
-            // For this example, we're simulating with a hardcoded data structure.
-            function fetchEmployeeData() {
-                // Simulating a fetch call with a Promise
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        const employees = [
-                            {
-                                "name": "John Doe",
-                                "department": "HR",
-                                "time": "09:00 AM",
-                                "email": "john.doe@example.com",
-                                "id": "EMP001",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Jane Smith",
-                                "department": "Sales Force",
-                                "time": "08:45 AM",
-                                "email": "jane.smith@example.com",
-                                "id": "EMP002",
-                                "status": "Off Site"
-                            },
-                            {
-                                "name": "Peter Jones",
-                                "department": "Academy",
-                                "time": "09:15 AM",
-                                "email": "peter.jones@example.com",
-                                "id": "EMP003",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Alice Brown",
-                                "department": "LC Studio",
-                                "time": "09:30 AM",
-                                "email": "alice.brown@example.com",
-                                "id": "EMP004",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Bob White",
-                                "department": "HR",
-                                "time": "08:00 AM",
-                                "email": "bob.white@example.com",
-                                "id": "EMP005",
-                                "status": "Off Site"
-                            },
-                            {
-                                "name": "Charlie Green",
-                                "department": "Sales Force",
-                                "time": "09:05 AM",
-                                "email": "charlie.green@example.com",
-                                "id": "EMP006",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Diana Prince",
-                                "department": "Academy",
-                                "time": "08:50 AM",
-                                "email": "diana.p@example.com",
-                                "id": "EMP007",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Eve Adams",
-                                "department": "LC Studio",
-                                "time": "09:20 AM",
-                                "email": "eve.adams@example.com",
-                                "id": "EMP008",
-                                "status": "Off Site"
-                            },
-                            {
-                                "name": "Frank Miller",
-                                "department": "HR",
-                                "time": "09:40 AM",
-                                "email": "frank.m@example.com",
-                                "id": "EMP009",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Grace Lee",
-                                "department": "Sales Force",
-                                "time": "08:30 AM",
-                                "email": "grace.lee@example.com",
-                                "id": "EMP010",
-                                "status": "On Site"
-                            }
-                        ];
-                        resolve({
-                            allEmployees: employees
-                        });
-                    }, 100); // Simulate network delay
-                });
-            }
-
-
-            // Load employee data on page load
-            fetchEmployeeData()
-                .then(data => {
-                    allEmployees = data.allEmployees || [];
-                    filterAndRender();
-                    initializeModals(); // Initialize modals after data loads
-                })
-                .catch(err => {
-                    console.error('Error loading employees:', err);
-                    // Fallback data if fetch fails (already provided in the HTML, but good to have a JS fallback too)
-                    allEmployees = [{
-                        "name": "Fallback User",
-                        "department": "IT",
-                        "time": "10:00 AM",
-                        "email": "fallback@example.com",
-                        "id": "FALLBACK001",
-                        "status": "On Site"
-                    }];
-                    filterAndRender();
-                    initializeModals(); // Initialize modals after fallback data loads
-                });
-
-            // Function to render employees to the table
-            function renderEmployees(employeesToRender) {
-                employeeTableBody.innerHTML = ''; // Clear existing rows
-                const startIndex = (currentPage - 1) * pageSize;
-                const endIndex = startIndex + pageSize;
-                const paginatedEmployees = employeesToRender.slice(startIndex, endIndex);
-
-                paginatedEmployees.forEach(employee => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${employee.name}</td>
-                        <td>${employee.department}</td>
-                        <td>${employee.time}</td>
-                        <td>${employee.email}</td>
-                        <td>${employee.id}</td>
-                        <td><span class="status-badge ${employee.status === 'On Site' ? 'status-on' : 'status-off'}">${employee.status}</span></td>
-                    `;
-                    employeeTableBody.appendChild(row);
-                });
-
-                updatePaginationInfo(employeesToRender.length);
-                setupPaginationControls(employeesToRender.length);
-            }
-
-            // Function to update pagination information text
-            function updatePaginationInfo(totalEntries) {
-                const startIndex = (currentPage - 1) * pageSize + 1;
-                const endIndex = Math.min(startIndex + pageSize - 1, totalEntries);
-                dataInfo.textContent = `Showing data ${startIndex} to ${endIndex} of ${totalEntries} entries`;
-            }
-
-            // Function to set up pagination buttons
-            function setupPaginationControls(totalEntries) {
-                paginationControls.innerHTML = '';
-                const totalPages = Math.ceil(totalEntries / pageSize);
-
-                // Previous button
-                const prevButton = document.createElement('button');
-                prevButton.textContent = '<';
-                prevButton.disabled = currentPage === 1;
-                prevButton.addEventListener('click', () => {
-                    currentPage--;
-                    filterAndRender();
-                });
-                paginationControls.appendChild(prevButton);
-
-                // Page number buttons
-                for (let i = 1; i <= totalPages; i++) {
-                    const pageButton = document.createElement('button');
-                    pageButton.textContent = i;
-                    if (i === currentPage) {
-                        pageButton.classList.add('active');
-                    }
-                    pageButton.addEventListener('click', () => {
-                        currentPage = i;
-                        filterAndRender();
-                    });
-                    paginationControls.appendChild(pageButton);
-                }
-
-                // Next button
-                const nextButton = document.createElement('button');
-                nextButton.textContent = '>';
-                nextButton.disabled = currentPage === totalPages;
-                nextButton.addEventListener('click', () => {
-                    currentPage++;
-                    filterAndRender();
-                });
-                paginationControls.appendChild(nextButton);
-            }
-
-            // Function to filter and render employees based on search and sort
-            function filterAndRender() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const sortBy = sortBySelect.value;
-
-                filteredEmployees = allEmployees.filter(employee =>
-                    employee.name.toLowerCase().includes(searchTerm) ||
-                    employee.department.toLowerCase().includes(searchTerm) ||
-                    employee.id.toLowerCase().includes(searchTerm)
-                );
-
-                if (sortBy === 'on-site') {
-                    filteredEmployees = filteredEmployees.filter(employee => employee.status === 'On Site');
-                } else if (sortBy === 'off-site') {
-                    filteredEmployees = filteredEmployees.filter(employee => employee.status === 'Off Site');
-                }
-
-                currentPage = 1; // Reset to first page after filtering
-                renderEmployees(filteredEmployees);
-            }
-
-            // Event Listeners for search and sort
-            searchInput.addEventListener('input', filterAndRender);
-            sortBySelect.addEventListener('change', filterAndRender);
-
-            // Initialize all modal functionality
-            function initializeModals() {
-                // Admin modal functionality
-                document.getElementById('adminButton').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    adminModal.style.display = 'flex';
-                });
-
-                // Employee modal functionality (triggered by the "View Employee" button in main panel)
-                document.querySelector('.add-employee-btn').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    employeeModal.style.display = 'flex';
-                });
-
-                // Cancel buttons for modals
-                document.getElementById('cancelAdmin').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    adminModal.style.display = 'none';
-                });
-
-                document.getElementById('cancelEmployee').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    employeeModal.style.display = 'none';
-                });
-
-                // Admin form submission (placeholder - in a real app, this would send data to a backend)
-                document.getElementById('adminForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    // You would typically collect form data here and send it to your server
-                    console.log('Admin Form Submitted');
-                    adminModal.style.display = 'none';
-                    // Add logic to handle admin creation/view here
-                });
-
-                // Employee form submission (placeholder - in a real app, this would send data to a backend)
-                document.getElementById('employeeForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const employeeName = document.getElementById('employeeName').value;
-                    const empDept = document.getElementById('empDept').value;
-                    const email = document.getElementById('email').value;
-                    const employeeId = document.getElementById('employeeId').value;
-
-                    if (!employeeName || !empDept || !email || !employeeId) {
-                        alert('Please fill in all fields.');
-                        return;
-                    }
-
-                    const newEmployee = {
-                        name: employeeName,
-                        department: empDept,
-                        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }), // Current time
-                        email: email,
-                        id: employeeId,
-                        status: "On Site" // Default status for new employee
-                    };
-
-                    // Add new employee to the existing data and re-render
-                    allEmployees.push(newEmployee);
-                    filterAndRender(); // Re-filter and re-render the table with the new employee
-                    employeeModal.style.display = 'none'; // Close modal
-                    document.getElementById('employeeForm').reset(); // Clear form
-                    console.log('Employee Form Submitted:', newEmployee);
-
-                    // In a real application, you'd send `newEmployee` data to your backend here.
-                    /*
-                    fetch('add_employee.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(newEmployee)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Success:', data);
-                        // If backend confirms, update allEmployees and re-render
-                        allEmployees.push(newEmployee);
-                        filterAndRender();
-                        employeeModal.style.display = 'none';
-                        document.getElementById('employeeForm').reset();
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        alert('Failed to add employee. Please try again.');
-                    });
-                    */
-                });
-
-
-                // Logout button functionality
-                document.getElementById('logoutButton').addEventListener('click', () => {
-                    logoutModal.style.display = 'flex';
-                });
-
-                // Mobile logout button functionality
-                document.getElementById('mobileLogoutButton').addEventListener('click', () => {
-                    logoutModal.style.display = 'flex';
-                });
-
-                document.getElementById('confirmLogoutBtn').addEventListener('click', () => {
-                    alert('Logging out...'); // Replace with actual logout logic (e.g., redirect to login page)
-                    logoutModal.style.display = 'none';
-                    // window.location.href = '/logout'; // Example redirect
-                });
-
-                document.getElementById('cancelLogoutBtn').addEventListener('click', () => {
-                    logoutModal.style.display = 'none';
-                });
-
-                // Panic button functionality
-                const panicConfirmationModal = document.getElementById('panic-confirmation-modal');
-                const confirmContinueBtn = document.getElementById('confirm-continue');
-                const cancelPanicBtn = document.getElementById('cancel-panic');
-
-                panicButton.addEventListener('click', () => {
-                    if (panicButton.classList.contains('off')) {
-                        panicConfirmationModal.style.display = 'flex'; // Show confirmation modal
-                    } else {
-                        // If panic mode is already ON, clicking it turns it OFF directly
-                        panicButton.classList.remove('on');
-                        panicButton.classList.add('off');
-                        console.log('Panic Mode OFF');
-                    }
-                });
-
-                confirmContinueBtn.addEventListener('click', () => {
-                    panicButton.classList.remove('off');
-                    panicButton.classList.add('on');
-                    panicConfirmationModal.style.display = 'none';
-                    console.log('Panic Mode ON');
-                    alert('Panic mode activated! Alerts triggered.'); // Placeholder for actual alert
-                });
-
-                cancelPanicBtn.addEventListener('click', () => {
-                    panicConfirmationModal.style.display = 'none';
-                });
-
-
-                // Hamburger menu functionality for mobile
-                hamburgerBtn.addEventListener('click', () => {
-                    mobileNav.classList.add('open');
-                    overlay.classList.add('open');
-                });
-
-                overlay.addEventListener('click', () => {
-                    mobileNav.classList.remove('open');
-                    overlay.classList.remove('open');
-                });
-            }
+      function fetchEmployeeData() {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            const employees = [
+              { name: "John Doe", department: "HR", time: "09:00 AM", email: "john.doe@example.com", id: "EMP001", status: "On Site" },
+              { name: "Jane Smith", department: "Sales Force", time: "08:45 AM", email: "jane.smith@example.com", id: "EMP002", status: "Off Site" },
+              { name: "Peter Jones", department: "Academy", time: "09:15 AM", email: "peter.jones@example.com", id: "EMP003", status: "On Site" },
+              { name: "Alice Brown", department: "LC Studio", time: "09:30 AM", email: "alice.brown@example.com", id: "EMP004", status: "On Site" },
+              { name: "Bob White", department: "HR", time: "08:00 AM", email: "bob.white@example.com", id: "EMP005", status: "Off Site" },
+              { name: "Charlie Green", department: "Sales Force", time: "09:05 AM", email: "charlie.green@example.com", id: "EMP006", status: "On Site" },
+              { name: "Diana Prince", department: "Academy", time: "08:50 AM", email: "diana.p@example.com", id: "EMP007", status: "On Site" },
+              { name: "Eve Adams", department: "LC Studio", time: "09:20 AM", email: "eve.adams@example.com", id: "EMP008", status: "Off Site" }
+            ];
+            resolve({ allEmployees: employees });
+          }, 100);
         });
-    </script>
+      }
+
+      fetchEmployeeData()
+        .then(data => {
+          allEmployees = data.allEmployees || [];
+          filterAndRender();
+        })
+        .catch(err => {
+          console.error('Error loading employees:', err);
+        });
+  // Function to format date as DD/MM/YYYY
+  function getCurrentDate() {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = today.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  // Update the span with current date
+  document.addEventListener('DOMContentLoaded', () => {
+    const dateElement = document.getElementById('currentDate');
+    if (dateElement) {
+      dateElement.textContent = getCurrentDate();
+    }
+  });
+      function renderEmployees(employeesToRender) {
+        employeeTableBody.innerHTML = '';
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const paginatedEmployees = employeesToRender.slice(startIndex, endIndex);
+        paginatedEmployees.forEach(employee => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${employee.name}</td>
+            <td>${employee.department}</td>
+            <td>${employee.time}</td>
+            <td>${employee.email}</td>
+            <td>${employee.id}</td>
+            <td><span class="status-badge ${employee.status === 'On Site' ? 'status-on' : 'status-off'}">${employee.status}</span></td>
+          `;
+          employeeTableBody.appendChild(row);
+        });
+        updatePaginationInfo(employeesToRender.length);
+        setupPaginationControls(employeesToRender.length);
+      }
+
+      function updatePaginationInfo(totalEntries) {
+        const startIndex = (currentPage - 1) * pageSize + 1;
+        const endIndex = Math.min(startIndex + pageSize - 1, totalEntries);
+        dataInfo.textContent = `Showing data ${startIndex} to ${endIndex} of ${totalEntries} entries`;
+      }
+
+      function setupPaginationControls(totalEntries) {
+        paginationControls.innerHTML = '';
+        const totalPages = Math.ceil(totalEntries / pageSize);
+
+        const prevButton = document.createElement('button');
+        prevButton.textContent = '<';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener('click', () => {
+          currentPage--;
+          filterAndRender();
+        });
+        paginationControls.appendChild(prevButton);
+
+        for (let i = 1; i <= totalPages; i++) {
+          const pageButton = document.createElement('button');
+          pageButton.textContent = i;
+          if (i === currentPage) pageButton.classList.add('active');
+          pageButton.addEventListener('click', () => {
+            currentPage = i;
+            filterAndRender();
+          });
+          paginationControls.appendChild(pageButton);
+        }
+
+        const nextButton = document.createElement('button');
+        nextButton.textContent = '>';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener('click', () => {
+          currentPage++;
+          filterAndRender();
+        });
+        paginationControls.appendChild(nextButton);
+      }
+
+      function filterAndRender() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const sortBy = sortBySelect.value;
+
+        filteredEmployees = allEmployees.filter(employee =>
+          employee.name.toLowerCase().includes(searchTerm) ||
+          employee.department.toLowerCase().includes(searchTerm) ||
+          employee.id.toLowerCase().includes(searchTerm)
+        );
+
+        if (sortBy === 'on-site') {
+          filteredEmployees = filteredEmployees.filter(emp => emp.status === 'On Site');
+        } else if (sortBy === 'off-site') {
+          filteredEmployees = filteredEmployees.filter(emp => emp.status === 'Off Site');
+        }
+
+        currentPage = 1;
+        renderEmployees(filteredEmployees);
+      }
+
+      searchInput.addEventListener('input', filterAndRender);
+      sortBySelect.addEventListener('change', filterAndRender);
+
+      // Logout functionality
+      document.getElementById('logoutButton').addEventListener('click', () => {
+        logoutModal.style.display = 'flex';
+      });
+
+      document.getElementById('mobileLogoutButton').addEventListener('click', () => {
+        logoutModal.style.display = 'flex';
+      });
+
+      document.getElementById('confirmLogoutBtn').addEventListener('click', () => {
+        alert('Logging out...');
+        logoutModal.style.display = 'none';
+      });
+
+      document.getElementById('cancelLogoutBtn').addEventListener('click', () => {
+        logoutModal.style.display = 'none';
+      });
+
+      // Hamburger menu functionality
+      hamburgerBtn.addEventListener('click', () => {
+        mobileNav.classList.add('open');
+        overlay.classList.add('open');
+      });
+
+      overlay.addEventListener('click', () => {
+        mobileNav.classList.remove('open');
+        overlay.classList.remove('open');
+      });
+
+      // Panic Button Functionality
+      const panicConfirmationModal = document.getElementById('panic-confirmation-modal');
+      const confirmContinueBtn = document.getElementById('confirm-continue');
+      const cancelPanicBtn = document.getElementById('cancel-panic');
+
+      panicButton.addEventListener('click', () => {
+        if (panicButton.classList.contains('off')) {
+          panicConfirmationModal.style.display = 'flex';
+        } else {
+          panicButton.classList.remove('on');
+          panicButton.classList.add('off');
+          console.log('Panic Mode OFF');
+        }
+      });
+
+      confirmContinueBtn.addEventListener('click', () => {
+        panicButton.classList.remove('off');
+        panicButton.classList.add('on');
+        panicConfirmationModal.style.display = 'none';
+        console.log('Panic Mode ON');
+        alert('Panic mode activated! Alerts triggered.');
+      });
+
+      cancelPanicBtn.addEventListener('click', () => {
+        panicConfirmationModal.style.display = 'none';
+      });
+    });
+  </script>
 </body>
 </html>
