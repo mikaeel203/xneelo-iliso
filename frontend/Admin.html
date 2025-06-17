@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Cards</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* Admin styles */
+
+        body {
+            font-family: 'Inter', 'Open Sans', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            height: 100%;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            width: 250px;
+            background: #f8f9fb;
+            padding: 1rem;
+            height: 100vh;
+            /* Make sidebar sticky */
+            position: sticky;
+            top: 0;
+            transition: max-height 0.3s ease, background-color 0.3s ease;
+        }
+
+        .flex-spacer {
+            flex-grow: 1;
+        }
+
+        .sidebar-header .brand {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 50px auto;
+            padding: 0.5rem 0;
+        }
+
+        .sidebar-header .brand img {
+            max-width: 100%;
+            max-height: 50px;
+            object-fit: contain;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            border-radius: 6px;
+            margin: 8px 0;
+            padding: 10px;
+            opacity: 1;
+            transform: scaleY(1);
+            background-color: #0f4392;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sidebar ul li:hover {
+            transform: scale(1.05);
+        }
+
+        .sidebar ul li.active {
+            background-color: #0F4392;
+        }
+
+        /* Styles for the navigation links/buttons */
+        .nav-link-button {
+            display: flex;
+            align-items: center;
+            color: #f8f9fb;
+            width: 100%;
+            text-decoration: none;
+            background: none;
+            border: none;
+            font: inherit;
+            cursor: pointer;
+            padding: 0; /* Handled by parent li */
+            border-radius: 6px; /* Handled by parent li */
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .sidebar ul li:hover .nav-link-button {
+            background-color: #0A3270; /* Darken on hover */
+            transform: scale(1.02); /* Slight scale on hover */
+        }
+
+        .nav-link-button i {
+            font-size: 1.8rem;
+            margin-right: 10px;
+            color: #f8f9fb;
+        }
+
+        /* Overlay for logout */
+        #logoutModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Centered modal box */
+        #logoutModal .logout-modal {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            animation: slideFadeIn 0.3s ease-in-out;
+        }
+
+        .logout-modal p {
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .button-group button {
+            flex: 1;
+            padding: 10px 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease-in-out;
+        }
+
+        #confirmLogoutBtn {
+            background-color: #ea1c1f;
+            color: white;
+            font-size: 13px;
+        }
+
+        #cancelLogoutBtn {
+            background-color: #ccc;
+            color: #333;
+        }
+
+        #confirmLogoutBtn:hover {
+            background-color: #ff0307;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #cancelLogoutBtn:hover {
+            background-color: #b3b3b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Card layout */
+        .card-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Page heading */
+        .page-heading {
+            text-align: center;
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 50px;
+            font-weight: bold;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        /* Individual card styling */
+        .card {
+            position: relative; /* Needed for menu positioning */
+            background-color: white;
+            width: 250px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+            border: 2px solid #0F4392;
+        }
+
+        /* Avatar styles */
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 10px;
+        }
+
+        .profile-dropdown .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            color: #1f1f1f;
+            padding: 25px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .profile-dropdown .nav-link:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .user-info-dropdown {
+            background: #f8f9fb;
+            border-radius: 8px;
+            margin-top: 10px;
+            padding: 15px;
+            box-shadow: 0 0px 12px rgba(0, 0, 0, 0.2);
+            width: 180px;
+        }
+
+        /* Initials fallback */
+        .initial {
+            width: 60px;
+            height: 60px;
+            background-color: #d1d1d1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 10px;
+        }
+
+        .menu-button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1; /* Ensure button is clickable */
+        }
+
+        .menu {
+            position: absolute;
+            bottom: 40px; /* Position above the button */
+            right: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            font-size: 14px;
+            z-index: 1000;
+            border-radius: 5px;
+            overflow: hidden; /* Ensures border-radius applies to inner buttons */
+        }
+
+        .menu button {
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            width: 100%; /* Make buttons full width of the menu */
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        .menu button:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Modal overlay */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Modal content */
+        .modal-content {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: slideFadeIn 0.3s ease-in-out;
+        }
+
+        /* Modal header */
+        .modal-content h2 {
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 24px;
+            color: #2c3e50;
+        }
+
+        /* Input fields */
+        .modal-content input {
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .modal-content input:focus {
+            border-color: #0F4392;
+        }
+
+        /* Buttons */
+        .modal-content button {
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .add-admin-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Add Admin Button */
+        #openAddAdminModal {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #0f4392;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        #openAddAdminModal:hover {
+            background-color: #0A3270;
+            transform: translateY(-2px);
+        }
+
+        #addAdminModal button[type="submit"] {
+            background-color: #0F4392;
+            color: white;
+        }
+
+        #addAdminModal button[type="submit"]:hover {
+            background-color: #0A3270;
+        }
+
+        #addAdminModal button[type="button"] { /* Cancel button */
+            background-color: #ccc;
+            color: #333;
+        }
+
+        #addAdminModal button[type="button"]:hover {
+            background-color: #aaa;
+        }
+
+        /* Edit Modal Specifics */
+        #editModal h2 {
+            color: #0F4392;
+        }
+
+        #editModal button.save-btn {
+            background-color: #0F4392;
+            color: white;
+        }
+
+        #editModal button.save-btn:hover {
+            background-color: #7DC5F8;
+            color: black;
+        }
+
+        #editModal button.cancel-btn {
+            background-color: #ccc;
+            color: #333;
+        }
+
+        #editModal button.cancel-btn:hover {
+            background-color: #aaa;
+        }
+
+        @keyframes slideFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png"
+                        alt="Iliso Logo" />
+                </div>
+            </div>
+
+            <ul class="nav-menu top-menu" id="topMenu">
+                <li>
+                    <a href="dashboard.html" class="nav-link-button">
+                        <i class="bx bx-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="view_admin.html" class="nav-link-button">
+                        <i class="bx bx-user-plus"></i>
+                        <span>View Admin</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="view_employee.html" class="nav-link-button">
+                        <i class="bx bx-group"></i>
+                        <span>View Employee</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="flex-spacer"></div>
+
+            <div class="profile-dropdown">
+                <button class="nav-link" id="profileButton">
+                    <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png"
+                        alt="Profile of Tara Snell" class="profile-image" />
+                    <span class="tooltip">Tara Snell</span>
+                </button>
+
+                <div class="user-info-dropdown" id="userInfoDropdown" style="display: none">
+                    <div class="user-details">
+                        <div class="user-title">Project Manager</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-overlay" id="logoutModal">
+                <div class="logout-modal">
+                    <p>⚠️ Are you sure you want to log out?</p>
+                    <div class="button-group">
+                        <button id="confirmLogoutBtn">Yes, log me out</button>
+                        <button id="cancelLogoutBtn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="nav-menu bottom-menu" id="bottomMenu">
+                <li>
+                    <button class="nav-link-button" id="logoutButton">
+                        <i class="bx bx-log-out"></i>
+                        <span>Log-Out</span>
+                    </button>
+                </li>
+            </ul>
+
+        </aside>
+
+        <div class="main-content">
+            <h1 class="page-heading">Administration Information</h1><br>
+
+            <div class="card-container" id="cardContainer"></div>
+            <div class="add-admin-container">
+                <button id="openAddAdminModal">➕ Add Admin</button>
+            </div>
+
+            <div id="addAdminModal" class="modal">
+                <div class="modal-content">
+                    <form action="" id="addAdminForm" method="post">
+                        <h2>Add New Admin</h2>
+                        <input type="text" placeholder="Username" id="adminName" required />
+                        <input type="email" placeholder="Email" id="adminEmail" required />
+                        <input type="tel" placeholder="Phone Number" id="adminPhone" required />
+                        <input type="password" placeholder="Password" id="adminPassword" required />
+                        <input type="password" placeholder="Main Password" id="adminMainPassword" required />
+                        <button type="submit">Add</button>
+                        <button type="button" id="cancelAddAdminModal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="editModal" class="modal">
+                <div class="modal-content">
+                    <h2>Edit Admin</h2>
+                    <input type="text" id="editName" placeholder="Full Name" required />
+                    <input type="email" id="editEmail" placeholder="Email" required />
+                    <input type="tel" id="editPhone" placeholder="Contact No" required />
+                    <input type="text" id="editId" placeholder="Employee ID" required disabled />
+                    <button class="save-btn">Save</button>
+                    <button class="cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const profileButton = document.getElementById('profileButton');
+            const userInfoDropdown = document.getElementById('userInfoDropdown');
+            const logoutModal = document.getElementById('logoutModal');
+            const logoutButton = document.getElementById("logoutButton");
+            const confirmLogoutBtn = document.getElementById("confirmLogoutBtn");
+            const cancelLogoutBtn = document.getElementById("cancelLogoutBtn");
+
+            const addAdminModal = document.getElementById("addAdminModal");
+            const openAddAdminModalBtn = document.getElementById("openAddAdminModal");
+            const cancelAddAdminModalBtn = document.getElementById("cancelAddAdminModal");
+            const addAdminForm = document.getElementById("addAdminForm");
+
+            const editModal = document.getElementById("editModal");
+            const saveEditBtn = editModal.querySelector(".save-btn");
+            const cancelEditBtn = editModal.querySelector(".cancel-btn");
+
+            const cardContainer = document.getElementById("cardContainer");
+
+            let employees = [
+                {
+                    name: "Tara Snell",
+                    email: "tarasnell@lifechoices.co.za",
+                    contact: "082 633 9613",
+                    id: "12345",
+                    avatar: "https://raw.githubusercontent.com/luthandodake10111/iliso--frontend-images-/refs/heads/main/Tara.png",
+                },
+                {
+                    name: "Keziah Petersen",
+                    email: "keziahpetersen@lifechoices.co.za",
+                    contact: "082 633 9613",
+                    id: "09876",
+                    avatar: "https://raw.githubusercontent.com/luthandodake10111/iliso--frontend-images-/refs/heads/main/Keziah.png",
+                },
+                {
+                    name: "Maxine Oliver",
+                    email: "maxine@lifechoices.co.za",
+                    contact: "0216964157",
+                    id: "80988",
+                    avatar: "https://raw.githubusercontent.com/luthandodake10111/iliso--frontend-images-/refs/heads/main/Maxine.png"
+                }
+            ];
+
+            let editingIndex = null; // To keep track of the employee being edited
+
+            // --- Sidebar & Profile Dropdown Logic ---
+            profileButton.addEventListener('click', () => {
+                userInfoDropdown.style.display = userInfoDropdown.style.display === 'block' ? 'none' : 'block';
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!profileButton.contains(e.target) && !userInfoDropdown.contains(e.target)) {
+                    userInfoDropdown.style.display = 'none';
+                }
+            });
+
+            // --- Logout Modal Logic ---
+            logoutButton.addEventListener("click", () => {
+                logoutModal.style.display = "flex";
+            });
+
+            confirmLogoutBtn.addEventListener("click", () => {
+                const logoutModalContent = logoutModal.querySelector('.logout-modal');
+                logoutModalContent.innerHTML = `<p>✅ Logged out successfully!</p>`;
+                setTimeout(() => window.location.href = "login.html", 1500); // Redirect after a short delay
+            });
+
+            cancelLogoutBtn.addEventListener("click", () => {
+                logoutModal.style.display = "none";
+            });
+
+            // --- Add Admin Modal Logic ---
+            openAddAdminModalBtn.addEventListener("click", () => {
+                addAdminModal.style.display = "flex";
+            });
+
+            cancelAddAdminModalBtn.addEventListener("click", () => {
+                addAdminModal.style.display = "none";
+                addAdminForm.reset(); // Clear form fields
+            });
+
+            addAdminForm.addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const name = document.getElementById('adminName').value.trim();
+                const email = document.getElementById('adminEmail').value.trim();
+                const phone = document.getElementById('adminPhone').value.trim();
+                const password = document.getElementById('adminPassword').value.trim();
+                const mainPassword = document.getElementById('adminMainPassword').value.trim();
+
+                // Basic validation
+                if (!name || !email || !phone || !password || !mainPassword) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+
+                // Example: Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert("Please enter a valid email address.");
+                    return;
+                }
+
+                // Example: Simple phone number validation (digits only)
+                const phoneRegex = /^\d+$/;
+                if (!phoneRegex.test(phone)) {
+                    alert("Phone number should contain only digits.");
+                    return;
+                }
+
+                // Example: Password strength check (at least 6 characters)
+                if (password.length < 6) {
+                    alert("Password must be at least 6 characters long.");
+                    return;
+                }
+
+                // You would typically verify the mainPassword against a stored value on the server
+                // For this client-side example, we'll just check if it's "admin123" for demonstration
+                if (mainPassword !== "admin123") { // Replace with actual validation logic
+                    alert("Incorrect Main Password. Cannot add new admin.");
+                    return;
+                }
+
+                // Add new admin to the employees array
+                employees.push({
+                    name: name,
+                    email: email,
+                    contact: phone,
+                    id: Math.floor(10000 + Math.random() * 90000).toString(), // Generate a 5-digit ID
+                    avatar: "" // No avatar initially for new admins
+                });
+
+                reloadCards(); // Re-render all cards
+
+                addAdminModal.style.display = "none"; // Hide modal
+                addAdminForm.reset(); // Clear form
+                alert("New admin added successfully!");
+            });
+
+            // --- Card Rendering Logic ---
+            function reloadCards() {
+                cardContainer.innerHTML = ""; // Clear existing cards
+                employees.forEach((emp, index) => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    card.dataset.index = index; // Store the index for easy access
+
+                    const avatarElement = emp.avatar
+                        ? `<img src="${emp.avatar}" alt="${emp.name}'s avatar" class="avatar" onerror="this.onerror=null;this.src='';this.outerHTML='<div class=\'initial\'>${emp.name.charAt(0)}</div>'">`
+                        : `<div class="initial">${emp.name.charAt(0)}</div>`;
+
+                    card.innerHTML = `
+                        ${avatarElement}
+                        <h3>${emp.name}</h3>
+                        <p><strong>Email:</strong><br>${emp.email}</p>
+                        <p><strong>Contact No:</strong><br>${emp.contact}</p>
+                        <p><strong>Employee ID:</strong><br>${emp.id}</p>
+                        <button class="menu-button">⋮</button>
+                        <div class="menu">
+                            <button class="edit-btn">Edit</button>
+                            <button class="delete-btn">Delete</button>
+                        </div>
+                    `;
+                    cardContainer.appendChild(card);
+                });
+            }
+
+            reloadCards(); // Initial load of cards
+
+            // --- Event Delegation for Card Actions (Edit/Delete) ---
+            cardContainer.addEventListener("click", function (event) {
+                const target = event.target;
+
+                if (target.classList.contains("menu-button")) {
+                    toggleMenu(target);
+                } else if (target.classList.contains("edit-btn")) {
+                    const card = target.closest(".card");
+                    const index = parseInt(card.dataset.index);
+                    editEmployee(index);
+                } else if (target.classList.contains("delete-btn")) {
+                    const card = target.closest(".card");
+                    const index = parseInt(card.dataset.index);
+                    deleteEmployee(index);
+                }
+            });
+
+            // --- Toggle Dropdown Menu for cards ---
+            function toggleMenu(button) {
+                const menu = button.nextElementSibling;
+                document.querySelectorAll(".menu").forEach(m => {
+                    if (m !== menu) m.style.display = "none"; // Close other open menus
+                });
+                menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+            }
+
+            // --- Close menus when clicking outside of any menu ---
+            document.addEventListener("click", function (e) {
+                if (!e.target.matches(".menu-button") && !e.target.closest(".menu")) {
+                    document.querySelectorAll(".menu").forEach(menu => menu.style.display = "none");
+                }
+            });
+
+            // --- Edit Employee Modal Logic ---
+            function editEmployee(index) {
+                editingIndex = index;
+                const emp = employees[index];
+                document.getElementById("editName").value = emp.name;
+                document.getElementById("editEmail").value = emp.email;
+                document.getElementById("editPhone").value = emp.contact;
+                document.getElementById("editId").value = emp.id; // Employee ID is disabled for editing
+                editModal.style.display = "flex";
+            }
+
+            saveEditBtn.addEventListener("click", function() {
+                if (editingIndex !== null) {
+                    const newName = document.getElementById("editName").value.trim();
+                    const newEmail = document.getElementById("editEmail").value.trim();
+                    const newPhone = document.getElementById("editPhone").value.trim();
+
+                    // Basic validation for edit fields
+                    if (!newName || !newEmail || !newPhone) {
+                        alert("Please fill in all fields.");
+                        return;
+                    }
+
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(newEmail)) {
+                        alert("Please enter a valid email address.");
+                        return;
+                    }
+
+                    const phoneRegex = /^\d+$/;
+                    if (!phoneRegex.test(newPhone)) {
+                        alert("Phone number should contain only digits.");
+                        return;
+                    }
+
+                    employees[editingIndex].name = newName;
+                    employees[editingIndex].email = newEmail;
+                    employees[editingIndex].contact = newPhone;
+
+                    closeEditModal();
+                    reloadCards();
+                    alert("Admin details updated successfully!");
+                }
+            });
+
+            cancelEditBtn.addEventListener("click", closeEditModal);
+
+            function closeEditModal() {
+                editModal.style.display = "none";
+                editingIndex = null;
+            }
+
+            // --- Delete Employee Logic ---
+            function deleteEmployee(index) {
+                if (confirm(`Are you sure you want to delete ${employees[index].name}?`)) {
+                    employees.splice(index, 1);
+                    reloadCards();
+                    alert("Admin deleted successfully!");
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

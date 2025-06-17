@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://cdn.boxicons.com/fonts/basic/boxicons.min.css"  rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css"  rel="stylesheet" />
+    <title>Employee Information</title>
+
+    <style>
+      /* === Sidebar Styles === */
+
+
+      .sidebar {
+        width: 200px;
+        background-color: #fff;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+
+      .sidebar-header img {
+        width: 100%;
+        max-height: 50px;
+      }
+
+      .nav-menu {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+      }
+       .nav-link.active {
+  background-color: #00459f;
+  color: blue;
+  font-weight: bold;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #00459f; /* Blue background */
+  color: white; /* White text */
+  transition: background-color 0.3s ease;
+}
+
+/* Optional: Hover effect */
+.nav-link:hover {
+  background-color: #3367D6; /* Lighter blue on hover */
+}
+
+/* Optional: Active state styling */
+.nav-link.active {
+  background-color: #003370; /* Darker blue for active item */
+  font-weight: bold;
+}
+
+      .logout-modal {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        max-width: 400px;
+        text-align: center;
+        margin: auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1000;
+      }
+
+      .button-group button {
+        padding: 10px 20px;
+        margin: 10px;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .button-group button:first-child {
+        background-color: #00459f;
+        color: white;
+      }
+
+      .button-group button:last-child {
+        background-color: #f0f0f0;
+        color: #333;
+      }
+
+      /* === Add Employee Modal === */
+      .modal-overlay #employeeModal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1000;
+        overflow: auto;
+      }
+
+      .modal-overlay .modal-content {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        margin: auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .close-btn {
+        float: right;
+        font-size: 24px;
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        right: 15px;
+      }
+
+      form input, form select {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        width: 100%;
+      }
+
+      .form-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .form-buttons button {
+        flex: 1;
+        padding: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+      }
+
+      .form-buttons button:first-child {
+        background-color: #00459f;
+        color: white;
+      }
+
+      .form-buttons button:last-child {
+        background-color: #f0f0f0;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+
+      /* === Main Content === */
+      .dashboard-container {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .main-board {
+        margin-left: 250px;
+        padding: 20px;
+        width: calc(100% - 250px);
+      }
+
+      .welcome-msg h2 {
+        margin: 0;
+      }
+
+      .search-contain {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+/* === Search Bar & Sort By Dropdown Styles === */
+.search-contain {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+.search-icon-input {
+  position: relative;
+  width: 250px;
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+.search-box {
+  padding-left: 30px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.search-box:focus {
+  border-color: #004aad;
+  box-shadow: 0 0 5px rgba(0, 74, 173, 0.4);
+}
+#sortByStatus {
+  width: 180px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  color: #333;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+#sortByStatus:focus {
+  border-color: #004aad;
+  box-shadow: 0 0 5px rgba(0, 74, 173, 0.5);
+}
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+        margin-top: 20px;
+      }
+
+      th {
+        padding: 12px;
+        border-bottom: 2px solid #ccc;
+        background-color: #f5f5f5;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+      }
+
+      tr.selected {
+        background-color: #e0e0e0;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 20px;
+      }
+
+      .pagination button {
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.2s;
+        border-radius: 10px;
+        border: 2px solid;
+      }
+
+      .pagination button:nth-child(1) {
+        background-color: #a2b4d6;
+        border-color: #204a87;
+        color: black;
+      }
+
+      .pagination button:nth-child(2) {
+        background-color: #f19999;
+        border-color: #d11e1e;
+        color: black;
+      }
+
+      .add-employee-button {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+      }
+
+      .add-employee-button button {
+        background-color: #00459f;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 20px 24px;
+        font-weight: 600;
+        height: 60px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      .add-employee-button button:hover {
+        background-color: #3367D6;
+        transform: translateY(-1px);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 15px 0;
+        font-size: 14px;
+        color: #666;
+      }
+      /* Add this to your style section */
+body > ul.nav-menu.bottom-menu, 
+body > #logoutButton {
+    display: none !important;
+}
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Sidebar Header -->
+      <div class="sidebar-header">
+        <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png"  alt="Logo" />
+      </div>
+
+      <!-- Top Menu -->
+      <ul class="nav-menu top-menu" id="topMenu">
+        <li class="nav-link" id="addminButton"><i class="bx bx-user"></i><span>Dashboard</span></li>
+        <ul class="nav-menu top-menu" id="topMenu">
+          <li class="nav-link" id="viewadmin"><i class="bx bx-user"></i><span>View Admin</span></li>
+        </ul>
+      </ul>
+
+      <!-- Profile Section -->
+      <div style="flex-grow: 1;"></div>
+      <div style="margin-top: auto; padding: 20px 0; border-top: 1px solid #e0e0e0;">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px;">
+          <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png"  alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />
+          <span style="font-weight: 500;">Tara Snell</span>
+        </div>
+
+        <!-- Logout Button -->
+        <ul class="nav-menu bottom-menu" id="sidebarLogout">
+          <li class="nav-link" id="logoutButton" style="padding: 10px; display: flex; align-items: center; gap: 10px;">
+            <i class="bx bx-log-out"></i><span>Log-Out</span>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-board">
+      <div class="welcome-msg"><h2>Welcome Tara 👋🏻</h2></div>
+
+      <!-- Search & Table -->
+      <section class="active-employees">
+        <div class="search-contain">
+          <h3>All Employees</h3>
+          <div class="search-bar">
+            <div class="search-icon-input">
+              <i class="bx bx-search-alt search-icon"></i>
+              <input type="text" class="search-box" placeholder="     Search" id="searchBox" />
+            </div>
+            <select id="sortByStatus">
+              <option value="all">Sort by: All</option>
+              <option value="On Site">Sort by: Newest</option>
+              <option value="Off Site">Sort by: Oldest</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Employee Table -->
+        <div id="tableContainer">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Email</th>
+                <th>Employee ID</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination"></div>
+
+        <!-- Add Employee Button -->
+        <div class="add-employee-button">
+          <button id="employeeButton" class="nav-link">
+            <i class="bx bx-user-plus"></i><span>Add New Employee</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer>
+        <div class="footer-slogan" id="updatePagination">Powered By ILISO</div>
+      </footer>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="logoutModal">
+      <div class="logout-modal">
+        <p>⚠️ Are you sure you want to log out?</p>
+        <div class="button-group">
+          <button id="confirmLogoutBtn">Yes, log me out</button>
+          <button id="cancelLogoutBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="employeeModal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="document.getElementById('employeeModal').style.display='none'">&times;</span>
+        <h2>Add Employee</h2>
+        <form id="employee-form" onsubmit="return false;">
+          <input type="text" placeholder="Employee Name" id="employeeName" required />
+          <select name="Dept" id="empDept" required>
+            <option value="" selected disabled>Select Department</option>
+            <option value="hr">Solar</option>
+            <option value="sales-force">Sales Force</option>
+            <option value="Academy">LC Academy</option>
+            <option value="lc-studio">LC Studio</option>
+          </select>
+          <input type="email" placeholder="Email" id="email" autocomplete="email" required />
+          <input type="text" placeholder="Employee ID" id="employeeId" required />
+
+          <div class="form-buttons">
+            <button id="submitemployee" type="submit">Submit</button>
+            <button id="cancelemployee" type="button" onclick="document.getElementById('employeeModal').style.display='none'">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+       // ====== Existing Code: Do Not Touch ======
+  document.getElementById("addminButton").addEventListener("click", function () {
+    window.location.href = "dashboard.html";
+  });
+
+  document.getElementById("viewadmin").addEventListener("click", function () {
+    window.location.href = "Admin.html";
+  });
+
+
+  const logoutText = document.createElement('span');
+  logoutText.textContent = 'Log-Out';
+
+
+  sidebarLogout.appendChild(logoutButton);
+
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'modal-overlay';
+  modalOverlay.id = 'logoutModal';
+  modalOverlay.style.display = 'none';
+
+  const logoutModal = document.createElement('div');
+  logoutModal.className = 'logout-modal';
+
+  const warningText = document.createElement('p');
+  warningText.textContent = '⚠️ Are you sure you want to log out?';
+
+  const buttonGroup = document.createElement('div');
+  buttonGroup.className = 'button-group';
+
+  const confirmButton = document.createElement('button');
+  confirmButton.id = 'confirmLogoutBtn';
+  confirmButton.textContent = 'Yes, log me out';
+
+  const cancelButton = document.createElement('button');
+  cancelButton.id = 'cancelLogoutBtn';
+  cancelButton.textContent = 'Cancel';
+
+  buttonGroup.appendChild(confirmButton);
+  buttonGroup.appendChild(cancelButton);
+
+  logoutModal.appendChild(warningText);
+  logoutModal.appendChild(buttonGroup);
+  modalOverlay.appendChild(logoutModal);
+
+
+  document.body.appendChild(modalOverlay);
+
+  document.getElementById('logoutButton').addEventListener('click', function() {
+    document.getElementById('logoutModal').style.display = 'block';
+  });
+
+  document.getElementById('cancelLogoutBtn').addEventListener('click', function() {
+    document.getElementById('logoutModal').style.display = 'none';
+  });
+
+  document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+    window.location.href = 'Login.html';
+  });
+  // ====== End of Unchanged Section ======
+
+  // ====== DUMMY EMPLOYEE DATA ======
+  const dummyEmployees = [
+    { id: 1, name: "Sibongile Nkosi", department: "Development", email: "sibongile.nkosi@moderntech.com", empId: "EMP001" },
+    { id: 2, name: "Lungile Moyo", department: "HR", email: "lungile.moyo@moderntech.com", empId: "EMP002" },
+    { id: 3, name: "Thabo Molefe", department: "QA", email: "thabo.molefe@moderntech.com", empId: "EMP003" },
+    { id: 4, name: "Keshav Naidoo", department: "Sales", email: "keshav.naidoo@moderntech.com", empId: "EMP004" },
+    { id: 5, name: "Zanele Khumalo", department: "Marketing", email: "zanele.khumalo@moderntech.com", empId: "EMP005" },
+    { id: 6, name: "Sipho Zulu", department: "Design", email: "sipho.zulu@moderntech.com", empId: "EMP006" },
+    { id: 7, name: "Naledi Moeketsi", department: "IT", email: "naledi.moeketsi@moderntech.com", empId: "EMP007" },
+    { id: 8, name: "Farai Gumbo", department: "Marketing", email: "farai.gumbo@moderntech.com", empId: "EMP008" },
+    { id: 9, name: "Karabo Dlamini", department: "Finance", email: "karabo.dlamini@moderntech.com", empId: "EMP009" },
+    { id: 10, name: "Fatima Patel", department: "Support", email: "fatima.patel@moderntech.com", empId: "EMP010" }
+  ];
+
+  let currentPage = 1;
+  const rowsPerPage = 7;
+  let selectedRow = null;
+
+  function selectRow(row) {
+    if (selectedRow) selectedRow.classList.remove('selected');
+    selectedRow = row;
+    row.classList.add('selected');
+  }
+
+  function renderTable(data, page) {
+    const tbody = document.getElementById('employeeTableBody');
+    tbody.innerHTML = '';
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const paginatedData = data.slice(start, end);
+
+    paginatedData.forEach(emp => {
+      const row = document.createElement('tr');
+      row.dataset.id = emp.id;
+      row.innerHTML = `
+        <td>${emp.name}</td>
+        <td>${emp.department}</td>
+        <td>${emp.email}</td>
+        <td>${emp.empId}</td>
+      `;
+      row.addEventListener('click', () => selectRow(row));
+      tbody.appendChild(row);
+    });
+
+    updatePagination(data.length, page);
+  }
+
+  function updatePagination(totalItems, currentPage) {
+    const totalPages = Math.ceil(totalItems / rowsPerPage);
+    const paginationDiv = document.querySelector('.pagination');
+    paginationDiv.innerHTML = '';
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'EDIT';
+    editBtn.style.backgroundColor = '#a2b4d6';
+    editBtn.style.border = '2px solid #204a87';
+    editBtn.style.color = '#000000';
+    editBtn.style.borderRadius = '10px';
+    editBtn.style.padding = '12px 24px';
+    editBtn.style.fontWeight = 'bold';
+    editBtn.style.cursor = 'pointer';
+    editBtn.onclick = handleEdit;
+    paginationDiv.appendChild(editBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'DELETE';
+    deleteBtn.style.backgroundColor = '#f19999';
+    deleteBtn.style.border = '2px solid #d11e1e';
+    deleteBtn.style.color = '#000000';
+    deleteBtn.style.borderRadius = '10px';
+    deleteBtn.style.padding = '12px 24px';
+    deleteBtn.style.fontWeight = 'bold';
+    deleteBtn.style.cursor = 'pointer';
+    deleteBtn.onclick = handleDelete;
+    paginationDiv.appendChild(deleteBtn);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.className = 'page-btn';
+      if (i === currentPage) btn.style.backgroundColor = '#a2b4d6';
+      btn.onclick = () => {
+        currentPage = i;
+        renderTable(dummyEmployees, currentPage);
+      };
+      paginationDiv.appendChild(btn);
+    }
+  }
+
+  function handleEdit() {
+    if (!selectedRow) {
+      alert("Please select a row to edit.");
+      return;
+    }
+
+    const id = selectedRow.cells[3].textContent;
+    const emp = dummyEmployees.find(e => e.empId === id);
+    if (!emp) return;
+
+    document.getElementById('employeeName').value = emp.name;
+    document.getElementById('empDept').value = emp.department.toLowerCase();
+    document.getElementById('email').value = emp.email;
+    document.getElementById('employeeId').value = emp.empId;
+
+    document.getElementById('employeeModal').style.display = 'block';
+
+    const index = dummyEmployees.findIndex(e => e.empId === id);
+    if (index > -1) dummyEmployees.splice(index, 1);
+  }
+
+  function handleDelete() {
+    if (!selectedRow) {
+      alert("Please select a row to delete.");
+      return;
+    }
+
+    const confirmDelete = confirm("Are you sure you want to delete this employee?");
+    if (!confirmDelete) return;
+
+    const id = selectedRow.cells[3].textContent;
+    const index = dummyEmployees.findIndex(e => e.empId === id);
+    if (index > -1) {
+      dummyEmployees.splice(index, 1);
+      selectedRow.remove();
+      selectedRow = null;
+      renderTable(dummyEmployees, currentPage);
+    }
+  }
+
+  // Handle Add New Employee
+document.addEventListener('DOMContentLoaded', function () {
+  // === Ensure the "Add New Employee" button works ===
+  const employeeButton = document.getElementById("employeeButton");
+  if (employeeButton) {
+    employeeButton.addEventListener("click", function () {
+      document.getElementById('employeeModal').style.display = 'block';
+      document.getElementById('employee-form').reset();
+    });
+  } else {
+    console.warn("Employee button not found!");
+  }
+
+  // === Submit handler for adding new employee ===
+  const form = document.getElementById('employee-form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('employeeName').value.trim();
+      const dept = document.getElementById('empDept').value;
+      const email = document.getElementById('email').value.trim();
+      const id = document.getElementById('employeeId').value.trim();
+
+      if (!name || !dept || !email || !id) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      // Prevent duplicate empId
+      const exists = dummyEmployees.some(emp => emp.empId === id);
+      if (exists) {
+        alert("Employee with this ID already exists.");
+        return;
+      }
+
+      const newEmp = {
+        id: dummyEmployees.length + 1,
+        name,
+        department: dept.charAt(0).toUpperCase() + dept.slice(1),
+        email,
+        empId: id
+      };
+
+      dummyEmployees.push(newEmp);
+      currentPage = Math.ceil(dummyEmployees.length / rowsPerPage);
+      renderTable(dummyEmployees, currentPage);
+      document.getElementById('employeeModal').style.display = 'none';
+      this.reset(); // Reset the form
+    });
+  }
+
+  // === Search functionality ===
+  const searchBox = document.getElementById("searchBox");
+  if (searchBox) {
+    searchBox.addEventListener('input', function () {
+      const searchTerm = this.value.toLowerCase();
+      const filtered = dummyEmployees.filter(emp =>
+        emp.name.toLowerCase().includes(searchTerm) ||
+        emp.empId.toLowerCase().includes(searchTerm)
+      );
+      renderTable(filtered, 1); // Always reset to page 1 on filter
+    });
+  }
+  
+  // === Initialize Table ===
+  renderTable(dummyEmployees, currentPage);
+
+  // Attach click event to each row
+  document.getElementById('employeeTableBody').addEventListener('click', function(e) {
+    if (e.target.tagName === 'TD') {
+      selectRow(e.target.parentNode);
+    }
+  });
+});
+// Add this at the end of your JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    const rogueLogoutButtons = document.querySelectorAll('body > ul.nav-menu.bottom-menu, body > #logoutButton');
+    rogueLogoutButtons.forEach(button => button.remove());
+});
+    </script>
+  </body>
+</html>

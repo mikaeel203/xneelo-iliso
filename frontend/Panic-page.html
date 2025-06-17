@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Safety Status Dashboard</title>
+  <!-- Boxicons CDN for icons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"  rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* Basic styling panic-dashboard */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+    }
+    .container {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+    }
+    /* Sidebar placeholder */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      width: 250px;
+      background: #f8f9fb;
+      padding: 1rem;
+      border-right: 1px solid #E0E0E0;
+    }
+    .flex-spacer {
+      flex-grow: 1;
+    }
+    .sidebar-header .brand {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 50px auto;
+      padding: 0.5rem 0;
+    }
+    .sidebar-header .brand img {
+      max-height: 50px;
+      object-fit: contain;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar ul li:hover {
+      transform: scale(1.05);
+      transition: transform 0.2s ease;
+    }
+    .sidebar ul li.active {
+      background-color: #0f4392;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      color: #0f4392;
+      width: 100%;
+      text-decoration: none;
+      background: none;
+      border: none;
+      font: inherit;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 12px 15px;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+    .nav-link:hover {
+      background-color: #d0d8ff;
+      color: #0f4392;
+    }
+    .nav-link i {
+      font-size: 1.6rem;
+      margin-right: 12px;
+      color: #0f4392;
+    }
+    .sidebar ul li {
+      margin: 8px 0;
+      padding: 0;
+      opacity: 1;
+      transform: scaleY(1);
+      transform-origin: top;
+      cursor: pointer;
+    }
+    /* Overlay for logout */
+    #logoutModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); /* overlay */
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    /* Centered modal box */
+    #logoutModal .logout-modal {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 350px;
+      width: 90%;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      animation: slideFadeIn 0.3s ease-in-out;
+    }
+    /* Panic Button */
+    .panic-button-container {
+      position: fixed;
+      top: 40px;
+      right: 20px;
+      z-index: 999; 
+    }
+    .panic-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px; 
+      height: 50px; 
+      border: none;
+      border-radius: 15px; 
+      cursor: pointer;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      background-color: transparent;
+    }
+    .panic-button .toggle-switch {
+      position: relative;
+      width: 30px;
+      height: 18px;
+      border-radius: 10px;
+      background-color: #918f8f; /* Gray when off */
+      transition: background-color 0.3s ease;
+    }
+    .panic-button.on .toggle-switch {
+      background-color: #f51313; /* Red when on */
+    }
+    .panic-button .toggle-switch::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: #fff; /* White circle */
+      transition: transform 0.3s ease;
+    }
+    .panic-button.on .toggle-switch::before {
+      transform: translateX(14px); /* Move circle right */
+    }
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh; /* Full viewport height */
+      overflow: hidden; /* Contain scroll inside cards */
+      padding: 20px;
+    }
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 28px;
+      margin: 0;
+      color: #0f4392;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+    }
+    /* Upper content sticky */
+    .upper-content {
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 10;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    /* Metrics */
+    .metrics {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .metric {
+      background-color: #F4F6F9;
+      width: 280px;
+      border-radius: 10px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      font-family: 'Inter', sans-serif;
+    }
+    .metric.safe {
+      background-color: rgba(0, 176, 135, 0.38); /* #00B087 at 38% opacity */
+      color: #004d3f;
+    }
+    .metric.not-safe {
+      background-color: rgba(223, 4, 4, 0.38); /* #df0404 at 38% opacity */
+      color: #730202;
+    }
+    .metric span {
+      font-size: 18px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .metric p {
+      font-size: 24px;
+      margin: 0;
+      font-weight: 700;
+    }
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    .filter-button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #0f4392;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.3s ease;
+    }
+    .filter-button:hover {
+      background-color: #09326d;
+    }
+    /* Cards */
+    .cards {
+      flex: 1 1 auto; /* fill remaining space */
+      overflow-y: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+      padding-top: 10px;
+      padding-left: 60px;
+      padding-right: 20px;
+    }
+    .card {
+      background-color: #FFFFFF;
+      border-radius: 5px;
+      width: 40%; /* Two cards per row */
+      height: 200px; /* Fixed height for scroll inside cards */
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      overflow-y: auto; /* Scroll inside card if needed */
+      font-family: 'Inter', sans-serif;
+    }
+    .card h3 {
+      text-align: center;
+      font-size: 16px;
+      margin: 0 0 10px 0;
+      font-weight: 600;
+      color: #0f4392;
+    }
+    /* Person layout */
+    .person {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .person p {
+      font-size: 14px;
+      margin: 0;
+      color: #333;
+    }
+    .person button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #f30909;
+      color: #FFFFFF;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    .person button:hover {
+      background-color: #00765e;
+    }
+    /* Footer */
+    .footer {
+      padding: 20px;
+      text-align: center;
+      margin-top: 20px;
+      font-family: 'Inter', sans-serif;
+      color: #0f4392;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <!-- Panic Button Turned ON-->
+  <div class="panic-button-container">
+    <button id="panicButton" class="panic-button on" title="Panic Button">
+      <div class="toggle-switch"></div>
+    </button>
+  </div>
+
+  <div class="container">
+     <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png" alt="Logo" />
+        </div>
+      </div>
+      <ul class="nav-menu top-menu">
+        <li class="nav-link"><i class="bx bx-user-plus"></i><span>Add New Admin</span></li>
+        <li class="nav-link"><i class="bx bx-user-plus"></i><span>Add New Employee</span></li>
+      </ul>
+      <div class="profile-dropdown">
+        <button class="nav-link">
+          <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png" alt="Profile" />
+          <span>Tara Snell</span>
+        </button>
+      </div>
+      <ul class="nav-menu bottom-menu">
+        <li class="nav-link"><span>Log-Out</span></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="header">
+        <h1>Safety Status</h1>
+      </header>
+
+      <!-- Upper Content sticky -->
+      <section class="upper-content">
+       <div class="metrics">
+  <div class="metric safe">
+    <span>Safe</span>
+    <p id="safeCount">0</p>
+  </div>
+  <div class="metric not-safe">
+    <span>Not Safe</span>
+    <p id="notSafeCount">0</p>
+  </div>
+</div>
+
+      </section>
+
+      <!-- Scrollable cards -->
+      <section class="cards">
+          <!-- Card 1 -->
+        <div class="card">
+          <h3>LCS</h3>
+          <div class="person"><p>Yandisa Khumalo</p><button>Unsafe</button></div>
+          <div class="person"><p>Owethu Sityata</p><button>Unsafe</button></div>
+          <div class="person"><p>Asive Daniel</p><button>Unsafe</button></div>
+          <div class="person"><p>Tiffany Johnston</p><button>Unsafe</button></div>
+          <div class="person"><p>Sinovuyo Joe</p><button>Unsafe</button></div>
+          <div class="person"><p>Tarryn Masunda</p><button>Unsafe</button></div>
+          <div class="person"><p>Nandipha Zigwebile</p><button>Unsafe</button></div>
+          <div class="person"><p>Sibabalwe Lingani</p><button>Unsafe</button></div>
+          <div class="person"><p>Keanen Olivia</p><button>Unsafe</button></div>
+          <div class="person"><p>Bukho Ntlabathi</p><button>Unsafe</button></div>
+        </div>
+        <!-- Card 2 -->
+        <div class="card">
+          <h3>Solar Department</h3>
+          <div class="person"><p>Alice Johnson</p><button>Unsafe</button></div>
+          <div class="person"><p>Bob Smith</p><button>Unsafe</button></div>
+          <div class="person"><p>Charlie Brown</p><button>Unsafe</button></div>
+          <div class="person"><p>Diana Ross</p><button>Unsafe</button></div>
+          <div class="person"><p>Ethan Hunt</p><button>Unsafe</button></div>
+          <div class="person"><p>Nandipha Zigwebile</p><button>Unsafe</button></div>
+          <div class="person"><p>Sibabalwe Lingani</p><button>Unsafe</button></div>
+          <div class="person"><p>Keanen Olivia</p><button>Unsafe</button></div>
+          <div class="person"><p>Bukho Ntlabathi</p><button>Unsafe</button></div>
+        </div>
+        <!-- Card 3 -->
+        <div class="card">
+          <h3>Salesforce</h3>
+          <div class="person"><p>Fiona Carter</p><button>Unsafe</button></div>
+          <div class="person"><p>Gary Newman</p><button>Unsafe</button></div>
+          <div class="person"><p>Hannah Lee</p><button>Unsafe</button></div>
+          <div class="person"><p>Nandipha Zigwebile</p><button>Unsafe</button></div>
+          <div class="person"><p>Sibabalwe Lingani</p><button>Unsafe</button></div>
+          <div class="person"><p>Keanen Olivia</p><button>Unsafe</button></div>
+          <div class="person"><p>Bukho Ntlabathi</p><button>Unsafe</button></div>
+        </div>
+        <!-- Card 4 -->
+        <div class="card">
+          <h3>LCS</h3>
+          <div class="person"><p>Ian Wright</p><button>Unsafe</button></div>
+          <div class="person"><p>Jane Doe</p><button>Unsafe</button></div>
+          <div class="person"><p>Kevin Hart</p><button>Unsafe</button></div>
+          <div class="person"><p>Nandipha Zigwebile</p><button>Unsafe</button></div>
+          <div class="person"><p>Sibabalwe Lingani</p><button>Unsafe</button></div>
+          <div class="person"><p>Keanen Olivia</p><button>Unsafe</button></div>
+          <div class="person"><p>Bukho Ntlabathi</p><button>Unsafe</button></div>
+        </div>
+        <!-- Card 5 -->
+        <div class="card">
+          <h3>Staff</h3>
+          <div class="person"><p>Lisa Ray</p><button>Unsafe</button></div>
+          <div class="person"><p>Matt Bellamy</p><button>Unsafe</button></div>
+          <div class="person"><p>Nina Simone</p><button>Unsafe</button></div>
+          <div class="person"><p>Nandipha Zigwebile</p><button>Unsafe</button></div>
+          <div class="person"><p>Sibabalwe Lingani</p><button>Unsafe</button></div>
+          <div class="person"><p>Keanen Olivia</p><button>Unsafe</button></div>
+          <div class="person"><p>Bukho Ntlabathi</p><button>Unsafe</button></div>
+        </div>
+      </section>
+
+       <div class="footer">Powered By ILISO</div>
+    </main>
+  </div>
+
+  <!-- Logout Modal -->
+  <div id="logoutModal">
+    <div class="logout-modal">
+      <p>Are you sure you want to logout?</p>
+      <button id="confirmLogout">Yes</button>
+      <button id="cancelLogout">No</button>
+    </div>
+  </div>
+
+  <script>
+    // Panic Button toggle
+    const panicBtn = document.getElementById('panicButton');
+    panicBtn.addEventListener('click', () => {
+      panicBtn.classList.toggle('on');
+      if (panicBtn.classList.contains('on')) {
+        console.log("Panic Button ON");
+      } else {
+        console.log("Panic Button OFF");
+      }
+    });
+
+    // Logout modal logic
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutModal = document.getElementById('logoutModal');
+    const confirmLogout = document.getElementById('confirmLogout');
+    const cancelLogout = document.getElementById('cancelLogout');
+
+    logoutBtn.addEventListener('click', () => {
+      logoutModal.style.display = 'flex';
+    });
+
+    cancelLogout.addEventListener('click', () => {
+      logoutModal.style.display = 'none';
+    });
+
+    confirmLogout.addEventListener('click', () => {
+      logoutModal.style.display = 'none';
+      alert('Logged out!');
+      // Add your logout logic here
+    });
+
+    // Close modal on clicking outside the modal box
+    logoutModal.addEventListener('click', (e) => {
+      if (e.target === logoutModal) {
+        logoutModal.style.display = 'none';
+      }
+    });
+    function updateCounters() {
+  const buttons = document.querySelectorAll('.person button');
+  let safe = 0;
+  let notSafe = 0;
+
+  buttons.forEach(button => {
+    if (button.classList.contains('not-safe')) {
+      notSafe++;
+    } else {
+      safe++;
+    }
+  });
+
+  document.getElementById('safeCount').textContent = safe;
+  document.getElementById('notSafeCount').textContent = notSafe;
+}
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('.person button').forEach(button => {
+    button.addEventListener('click', () => {
+      button.classList.toggle('not-safe');
+      button.textContent = button.classList.contains('not-safe') ? 'Not Safe' : 'Safe';
+      updateCounters();
+    });
+  });
+
+  updateCounters(); // Initial count
+});
+
+  </script>
+</body>
+</html>
