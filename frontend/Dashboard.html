@@ -896,664 +896,702 @@
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png" alt="Logo" />
-            </div>
-
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item" id="adminButton">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    <span>View Admin</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </a>
-
-                <div class="modal-overlay" id="adminModal" style="display: none">
-                    <div class="modal-content">
-                        <form id="adminForm">
-                            <h2>Add Admin</h2>
-                            <input type="text" placeholder="Username" id="adminName" required />
-                            <input type="email" placeholder="Email" id="adminEmail" required />
-                            <input type="tel" placeholder="Phone number" id="adminNumber" required />
-                            <input type="password" placeholder="Password" id="adminPassword" required />
-                            <input type="password" placeholder="Main Password" id="adminMainPassword" required />
-                            <div class="button-group">
-                                <button type="submit" id="submitAdmin">Submit</button>
-                                <button type="button" id="cancelAdmin">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <a href="#" class="nav-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    <span>View Employee</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </a>
-
-                <div class="modal-overlay" id="employeeModal" style="display: none">
-                    <div class="modal-content">
-                        <form id="employeeForm">
-                            <h2>View Employee</h2>
-                            <input type="text" placeholder="Employee Name" id="employeeName" required />
-                            <select name="Dept" id="empDept" required>
-                                <option value="" selected disabled>Select Department</option>
-                                <option value="hr">HR</option>
-                                <option value="sales-force">Sales Force</option>
-                                <option value="Academy">Academy</option>
-                                <option value="lc-studio">LC Studio</option>
-                            </select>
-                            <input type="email" placeholder="Email" id="email" autocomplete="email" required />
-                            <input type="text" placeholder="Employee ID" id="employeeId" required />
-                            <div class="button-group">
-                                <button type="submit" id="submitEmployee">Submit</button>
-                                <button type="button" id="cancelEmployee">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png"
-                        alt="Profile" class="profile-image" />
-                    <div class="user-info">
-                        <span class="user-name">Tara Snell</span>
-                        <span class="user-role">Administrator</span>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </div>
-
-                <div class="modal-overlay" id="logoutModal" style="display: none">
-                    <div class="logout-modal">
-                        <p>⚠️ Are you sure you want to log out?</p>
-                        <div class="button-group">
-                            <button id="confirmLogoutBtn">Yes, log me out</button>
-                            <button id="cancelLogoutBtn">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="logout-btn" id="logoutButton">
-                    LOGOUT
-                </button>
-            </div>
-        </aside>
-
-        <nav class="mobile-nav">
-            <a href="#" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                    <a href="view_employee.html" class="nav-link-button">
-                        <i class="bx bx-group"></i>
-                        <span>View Employee</span>
-                    </a>
-            </a>
-            <a href="#" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                <span>View Employee</span>
-            </a>
-            <button class="logout-btn" id="mobileLogoutButton">LOGOUT</button>
-        </nav>
-        <div class="overlay"></div>
-
-        <main class="main-content">
-            <header class="main-header">
-                <div class="header-top">
-                    <div class="my-img">
-                        <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png"
-                            alt="Logo" style="height: 35px;" width="100px" />
-                    </div>
-                    <div class="welcome-message">
-                        <h1>Welcome Tara 👋</h1>
-                        <p>Here's a quick overview of today's activity</p>
-                    </div>
-                    <div class="header-controls">
-                        <div class="panic-button-container">
-                            <button id="panic-button" class="panic-button off">
-                                <span class="toggle-switch"></span>
-                            </button>
-                        </div>
-
-                        <div id="panic-confirmation-modal" style="display: none;">
-                            <div class="modal-content">
-                                <h2>Activate Panic Mode</h2>
-                                <p>Are you sure you want to activate the panic mode?</p>
-                                <div class="warning-section">
-                                    <i class="bx bx-error-circle"></i>
-                                    <span>Warning</span>
-                                    <p>This will trigger an alert to all users and emergency systems.</p>
-                                </div>
-                                <div class="button-group">
-                                    <button id="confirm-continue">Continue</button>
-                                    <button id="cancel-panic">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="hamburger-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="3" y1="12" x2="21" y2="12"></line>
-                                <line x1="3" y1="6" x2="21" y2="6"></line>
-                                <line x1="3" y1="18" x2="21" y2="18"></line>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <section class="content-panel">
-                <div class="mobile-user-profile">
-                    <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png"
-                        alt="Profile" class="profile-image" />
-                    <div class="user-info">
-                        <span class="user-name">Tara Snell</span>
-                        <span class="user-role">Project Manager</span>
-                    </div>
-                </div>
-
-                <div class="panel-header">
-                    <div class="panel-header-left">
-                        <h2>Active Employees</h2>
-                        <span class="panel-date">30/05/2025</span>
-                    </div>
-                    <div class="panel-controls">
-                        <div class="search-box">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            <input type="text" placeholder="Search">
-                        </div>
-                        <div class="sort-box">
-                            <label for="sort-by">Sort by :</label>
-                            <select id="sort-by">
-                                <option value="default">Default</option>
-                                <option value="on-site">On Site</option>
-                                <option value="off-site">Off Site</option>
-                            </select>
-                        </div>
-                        <button class="add-employee-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                                <circle cx="9" cy="7" r="4" />
-                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </svg>
-                            <span>View Employee</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="table-container" id="tableContainer">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Employee Name</th>
-                                <th>Department</th>
-                                <th>Clock In Time</th>
-                                <th>Email</th>
-                                <th>Employee ID</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="employeeTableBody">
-                            </tbody>
-                    </table>
-                </div>
-
-                <div class="panel-footer">
-                    <div class="pagination-info">
-                        Showing data 1 to 8 of 256k entries
-                    </div>
-                    <div class="pagination-controls">
-                        <button>&lt;</button>
-                        <button class="active">1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>4</button>
-                        <span>...</span>
-                        <button>40</button>
-                        <button>&gt;</button>
-                    </div>
-                </div>
-            </section>
-
-            <footer class="main-footer">
-                <p>Powered By Iliso</p>
-            </footer>
-        </main>
+  <div class="dashboard-container">
+  <aside class="sidebar">
+    <div class="sidebar-header"> 
+      <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png" alt="Logo" />
     </div>
 
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item" id="adminButton">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span >View Admin</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+
+      <div class="modal-overlay" id="adminModal" style="display: none">
+        <div class="modal-content">
+          <form id="adminForm">
+            <h2>Add Admin</h2>
+            <input type="text" placeholder="Username" id="adminName" required />
+            <input type="email" placeholder="Email" id="adminEmail" required />
+            <input type="tel" placeholder="Phone number" id="adminNumber" required />
+            <input type="password" placeholder="Password" id="adminPassword" required />
+            <input type="password" placeholder="Main Password" id="adminMainPassword" required />
+            <div class="button-group">
+              <button type="submit" id="submitAdmin">Submit</button>
+              <button type="button" id="cancelAdmin">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>View Employee</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+
+      <div class="modal-overlay" id="employeeModal" style="display: none">
+        <div class="modal-content">
+          <form id="employeeForm">
+            <h2>View Employee</h2>
+            <input type="text" placeholder="Employee Name" id="employeeName" required />
+            <select name="Dept" id="empDept" required>
+              <option value="" selected disabled>Select Department</option>
+              <option value="hr">HR</option>
+              <option value="sales-force">Sales Force</option>
+              <option value="Academy">Academy</option>
+              <option value="lc-studio">LC Studio</option>
+            </select>
+            <input type="email" placeholder="Email" id="email" autocomplete="email" required />
+            <input type="text" placeholder="Employee ID" id="employeeId" required />
+            <div class="button-group">
+              <button type="submit" id="submitEmployee">Submit</button>
+              <button type="button" id="cancelEmployee">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png" alt="Profile" class="profile-image" />       <div class="user-info">
+          <span class="user-name">Tara Snell</span>
+          <span class="user-role">Administrator</span>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+
+      <div class="modal-overlay" id="logoutModal" style="display: none">
+        <div class="logout-modal">
+          <p>⚠️ Are you sure you want to log out?</p>
+          <div class="button-group">
+            <button id="confirmLogoutBtn">Yes, log me out</button>
+            <button id="cancelLogoutBtn">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="logout-btn" id="logoutButton">
+        LOGOUT
+      </button>
+    </div>
+  </aside>
+
+  <nav class="mobile-nav">
+    <a href="#" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>View Admin</span>
+    </a>
+    <a href="#" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>View Employee</span>
+    </a>
+    <button class="logout-btn" id="mobileLogoutBtn">LOGOUT</button>
+  </nav>
+  <div class="overlay"></div>
+
+  <main class="main-content">
+    <header class="main-header">
+      <div class="header-top">
+        <div class="my-img">
+        <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/iliso%20logo.png" alt="Logo" style="height: 35px;" width="100px"/>
+        </div>
+        <div class="welcome-message">
+          <h1>Welcome Tara 👋</h1>
+          <p>Here's a quick overview of today's activity</p>
+        </div>
+        <div class="header-controls">
+          <div class="panic-button-container">
+            <button id="panic-button" class="panic-button off">
+              <span class="toggle-switch"></span>
+            </button>
+          </div>
+
+          <div id="panic-confirmation-modal" style="display: none;">
+            <div class="modal-content">
+              <h2>Activate Panic Mode</h2>
+              <p>Are you sure you want to activate the panic mode?</p>
+              <div class="warning-section">
+                <i class="bx bx-error-circle"></i>
+                <span>Warning</span>
+                <p>This will trigger an alert to all users and emergency systems.</p>
+              </div>
+              <div class="button-group">
+                <button id="confirm-continue">Continue</button>
+                <button id="cancel-panic">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <button class="hamburger-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+    <section class="content-panel">
+      <div class="mobile-user-profile">
+        <img src="https://github.com/luthandodake10111/iliso--frontend-images-/raw/main/tara%20logo.png" alt="Profile" class="profile-image" />
+        <div class="user-info">
+          <span class="user-name">Tara Snell</span>
+          <span class="user-role">Project Manager</span>
+        </div>
+      </div>
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <h2>Active Employees</h2>
+          <span class="panel-date">30/05/2025</span>
+        </div>
+        <div class="panel-controls">
+          <div class="search-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search">
+          </div>
+          <div class="sort-box">
+            <label for="sort-by">Sort by :</label>
+            <select id="sort-by">
+              <option value="default">Default</option>
+              <option value="on-site">On Site</option>
+              <option value="off-site">Off Site</option>
+            </select>
+          </div>
+          <button class="add-employee-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>View Employee</span>
+          </button>
+        </div>
+      </div>
+      <div class="table-container" id="tableContainer">
+        <table>
+          <thead>
+          <tr>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Clock In Time</th>
+            <th>Email</th>
+            <th>Employee ID</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+          <tbody id="employeeTableBody">
+          </tbody>
+        </table>
+      </div>
+      <div class="panel-footer">
+        <div class="pagination-info">
+          Showing data 1 to 8 of 256k entries
+        </div>
+        <div class="pagination-controls">
+          <button>&lt;</button>
+          <button class="active">1</button>
+          <button>2</button>
+          <button>3</button>
+          <button>4</button>
+          <span>...</span>
+          <button>40</button>
+          <button>&gt;</button>
+        </div>
+      </div>
+    </section>
+    <footer class="main-footer">
+      <p>Powered By Iliso</p>
+    </footer>
+  </main>
+</div>
+
+
     <script>
-        // JavaScript for dashboard interactivity
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get references to DOM elements
-            const employeeTableBody = document.getElementById('employeeTableBody');
-            const searchInput = document.querySelector('.search-box input');
-            const sortBySelect = document.getElementById('sort-by');
-            const dataInfo = document.querySelector('.pagination-info');
-            const paginationControls = document.querySelector('.pagination-controls');
-            const employeeModal = document.getElementById('employeeModal');
-            const adminModal = document.getElementById('adminModal');
-            const logoutModal = document.getElementById('logoutModal');
-            const panicButton = document.getElementById('panic-button');
-            const hamburgerBtn = document.querySelector('.hamburger-btn');
-            const mobileNav = document.querySelector('.mobile-nav');
-            const overlay = document.querySelector('.overlay');
-            const submitEmployeeButton = document.getElementById('submitEmployee');
-            const cancelEmployeeButton = document.getElementById('cancelEmployee');
-            const submitAdminButton = document.getElementById('submitAdmin');
-            const cancelAdminButton = document.getElementById('cancelAdmin');
+  document.addEventListener('DOMContentLoaded', () => {
+    // DOM elements
+    const employeeTableBody = document.getElementById('employeeTableBody');
+    const searchInput = document.querySelector('.search-box input');
+    const sortBySelect = document.getElementById('sort-by');
+    const dataInfo = document.querySelector('.pagination-info');
+    const paginationControls = document.querySelector('.pagination-controls');
+    const employeeModal = document.getElementById('employeeModal');
+    const adminModal = document.getElementById('adminModal');
+    const logoutModal = document.getElementById('logoutModal');
+    const panicButton = document.getElementById('panic-button');
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+    const mobileNav = document.querySelector('.mobile-nav');
+    const overlay = document.querySelector('.overlay');
+    const submitEmployeeButton = document.getElementById('submitEmployee'); // Not directly used in the provided snippet's event listener
+    const cancelEmployeeButton = document.getElementById('cancelEmployee'); // Not directly used in the provided snippet's event listener
+    const submitAdminButton = document.getElementById('submitAdmin'); // Not directly used in the provided snippet's event listener
+    const cancelAdminButton = document.getElementById('cancelAdmin'); // Not directly used in the provided snippet's event listener
 
-            // Pagination variables
-            let currentPage = 1;
-            const pageSize = 8;
-            let allEmployees = []; // Stores all fetched employee data
-            let filteredEmployees = []; // Stores employees after search/sort filters
+    // Pagination variables
+    let currentPage = 1;
+    const pageSize = 8;
+    let allEmployees = [];
+    let filteredEmployees = [];
 
-            // Function to fetch employee data
-            // In a real application, you'd fetch this from a backend API.
-            // For this example, we're simulating with a hardcoded data structure.
-            function fetchEmployeeData() {
-                // Simulating a fetch call with a Promise
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        const employees = [
-                            {
-                                "name": "John Doe",
-                                "department": "HR",
-                                "time": "09:00 AM",
-                                "email": "john.doe@example.com",
-                                "id": "EMP001",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Jane Smith",
-                                "department": "Sales Force",
-                                "time": "08:45 AM",
-                                "email": "jane.smith@example.com",
-                                "id": "EMP002",
-                                "status": "Off Site"
-                            },
-                            {
-                                "name": "Peter Jones",
-                                "department": "Academy",
-                                "time": "09:15 AM",
-                                "email": "peter.jones@example.com",
-                                "id": "EMP003",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Alice Brown",
-                                "department": "LC Studio",
-                                "time": "09:30 AM",
-                                "email": "alice.brown@example.com",
-                                "id": "EMP004",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Bob White",
-                                "department": "HR",
-                                "time": "08:00 AM",
-                                "email": "bob.white@example.com",
-                                "id": "EMP005",
-                                "status": "Off Site"
-                            },
-                            {
-                                "name": "Charlie Green",
-                                "department": "Sales Force",
-                                "time": "09:05 AM",
-                                "email": "charlie.green@example.com",
-                                "id": "EMP006",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Diana Prince",
-                                "department": "Academy",
-                                "time": "08:50 AM",
-                                "email": "diana.p@example.com",
-                                "id": "EMP007",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Eve Adams",
-                                "department": "LC Studio",
-                                "time": "09:20 AM",
-                                "email": "eve.adams@example.com",
-                                "id": "EMP008",
-                                "status": "Off Site"
-                            },
-                            {
-                                "name": "Frank Miller",
-                                "department": "HR",
-                                "time": "09:40 AM",
-                                "email": "frank.m@example.com",
-                                "id": "EMP009",
-                                "status": "On Site"
-                            },
-                            {
-                                "name": "Grace Lee",
-                                "department": "Sales Force",
-                                "time": "08:30 AM",
-                                "email": "grace.lee@example.com",
-                                "id": "EMP010",
-                                "status": "On Site"
-                            }
-                        ];
-                        resolve({
-                            allEmployees: employees
+    // Fetch employee data
+    fetch('./assets/employees_data.json')
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(data => {
+            allEmployees = data.allEmployees || [];
+            filterAndRender();
+            initializeModals(); // Initialize modals after data loads
+        })
+        .catch(err => {
+            console.error('Error loading employees:', err);
+            // Fallback data if fetch fails
+            allEmployees = [
+                {
+                    "name": "John Doe",
+                    "department": "HR",
+                    "time": "09:00 AM",
+                    "email": "john@example.com",
+                    "id": "EMP001",
+                    "status": "On Site"
+                },
+                {
+                    "name": "Jane Smith",
+                    "department": "Sales",
+                    "time": "08:45 AM",
+                    "email": "jane@example.com",
+                    "id": "EMP002",
+                    "status": "Off Site"
+                },
+                {
+                    "name": "Peter Jones",
+                    "department": "Academy",
+                    "time": "09:15 AM",
+                    "email": "peter@example.com",
+                    "id": "EMP003",
+                    "status": "On Site"
+                },
+                {
+                    "name": "Alice Brown",
+                    "department": "LC Studio",
+                    "time": "08:30 AM",
+                    "email": "alice@example.com",
+                    "id": "EMP004",
+                    "status": "Off Site"
+                },
+                {
+                    "name": "Robert White",
+                    "department": "HR",
+                    "time": "09:05 AM",
+                    "email": "robert@example.com",
+                    "id": "EMP005",
+                    "status": "On Site"
+                },
+                {
+                    "name": "Emily Green",
+                    "department": "Sales",
+                    "time": "08:50 AM",
+                    "email": "emily@example.com",
+                    "id": "EMP006",
+                    "status": "On Site"
+                },
+                {
+                    "name": "Michael Black",
+                    "department": "Academy",
+                    "time": "09:20 AM",
+                    "email": "michael@example.com",
+                    "id": "EMP007",
+                    "status": "Off Site"
+                },
+                {
+                    "name": "Sarah Blue",
+                    "department": "LC Studio",
+                    "time": "08:40 AM",
+                    "email": "sarah@example.com",
+                    "id": "EMP008",
+                    "status": "On Site"
+                },
+                {
+                    "name": "David Grey",
+                    "department": "HR",
+                    "time": "09:10 AM",
+                    "email": "david@example.com",
+                    "id": "EMP009",
+                    "status": "Off Site"
+                },
+                {
+                    "name": "Laura Purple",
+                    "department": "Sales",
+                    "time": "08:55 AM",
+                    "email": "laura@example.com",
+                    "id": "EMP010",
+                    "status": "On Site"
+                },
+                {
+                    "name": "Chris Orange",
+                    "department": "Academy",
+                    "time": "09:25 AM",
+                    "email": "chris@example.com",
+                    "id": "EMP011",
+                    "status": "On Site"
+                },
+                {
+                    "name": "Olivia Pink",
+                    "department": "LC Studio",
+                    "time": "08:45 AM",
+                    "email": "olivia@example.com",
+                    "id": "EMP012",
+                    "status": "Off Site"
+                }
+            ];
+            filterAndRender();
+            initializeModals(); // Initialize modals after fallback data loads
+        });
+
+    // Initialize all modal functionality
+    function initializeModals() {
+        // Admin modal
+        document.getElementById('adminButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            adminModal.style.display = 'flex';
+        });
+
+        // Employee modal
+        document.querySelector('.add-employee-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            employeeModal.style.display = 'flex';
+        });
+
+        // Cancel buttons
+        document.getElementById('cancelAdmin').addEventListener('click', (e) => {
+            e.preventDefault();
+            adminModal.style.display = 'none';
+        });
+
+        document.getElementById('cancelEmployee').addEventListener('click', (e) => {
+            e.preventDefault();
+            employeeModal.style.display = 'none';
+        });
+
+        // Form submissions
+        document.getElementById('adminForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            adminModal.style.display = 'none';
+            // Handle admin form submission - You would typically send this data to a server
+            alert('Admin form submitted (functionality to be implemented)');
+            // Clear form fields
+            document.getElementById('adminName').value = '';
+            document.getElementById('adminEmail').value = '';
+            document.getElementById('adminNumber').value = '';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminMainPassword').value = '';
+        });
+
+        document.getElementById('employeeForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const employeeName = document.getElementById('employeeName').value;
+            const empDept = document.getElementById('empDept').value;
+            const email = document.getElementById('email').value;
+            const employeeId = document.getElementById('employeeId').value;
+
+            if (!employeeName || !empDept || !email || !employeeId) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const employeeData = {
+                name: employeeName,
+                department: empDept,
+                email: email,
+                employeeId: employeeId
+            };
+
+            // This fetch call assumes you have a server-side script 'add_employee.php'
+            // to handle saving the new employee data.
+            fetch('add_employee.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employeeData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        // Attempt to read the error message from the response body
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.message || 'Server error occurred');
                         });
-                    }, 100); // Simulate network delay
-                });
-            }
-
-
-            // Load employee data on page load
-            fetchEmployeeData()
-                .then(data => {
-                    allEmployees = data.allEmployees || [];
-                    filterAndRender();
-                    initializeModals(); // Initialize modals after data loads
+                    }
+                    return response.json();
                 })
-                .catch(err => {
-                    console.error('Error loading employees:', err);
-                    // Fallback data if fetch fails (already provided in the HTML, but good to have a JS fallback too)
-                    allEmployees = [{
-                        "name": "Fallback User",
-                        "department": "IT",
-                        "time": "10:00 AM",
-                        "email": "fallback@example.com",
-                        "id": "FALLBACK001",
-                        "status": "On Site"
-                    }];
-                    filterAndRender();
-                    initializeModals(); // Initialize modals after fallback data loads
-                });
-
-            // Function to render employees to the table
-            function renderEmployees(employeesToRender) {
-                employeeTableBody.innerHTML = ''; // Clear existing rows
-                const startIndex = (currentPage - 1) * pageSize;
-                const endIndex = startIndex + pageSize;
-                const paginatedEmployees = employeesToRender.slice(startIndex, endIndex);
-
-                paginatedEmployees.forEach(employee => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${employee.name}</td>
-                        <td>${employee.department}</td>
-                        <td>${employee.time}</td>
-                        <td>${employee.email}</td>
-                        <td>${employee.id}</td>
-                        <td><span class="status-badge ${employee.status === 'On Site' ? 'status-on' : 'status-off'}">${employee.status}</span></td>
-                    `;
-                    employeeTableBody.appendChild(row);
-                });
-
-                updatePaginationInfo(employeesToRender.length);
-                setupPaginationControls(employeesToRender.length);
-            }
-
-            // Function to update pagination information text
-            function updatePaginationInfo(totalEntries) {
-                const startIndex = (currentPage - 1) * pageSize + 1;
-                const endIndex = Math.min(startIndex + pageSize - 1, totalEntries);
-                dataInfo.textContent = `Showing data ${startIndex} to ${endIndex} of ${totalEntries} entries`;
-            }
-
-            // Function to set up pagination buttons
-            function setupPaginationControls(totalEntries) {
-                paginationControls.innerHTML = '';
-                const totalPages = Math.ceil(totalEntries / pageSize);
-
-                // Previous button
-                const prevButton = document.createElement('button');
-                prevButton.textContent = '<';
-                prevButton.disabled = currentPage === 1;
-                prevButton.addEventListener('click', () => {
-                    currentPage--;
-                    filterAndRender();
-                });
-                paginationControls.appendChild(prevButton);
-
-                // Page number buttons
-                for (let i = 1; i <= totalPages; i++) {
-                    const pageButton = document.createElement('button');
-                    pageButton.textContent = i;
-                    if (i === currentPage) {
-                        pageButton.classList.add('active');
-                    }
-                    pageButton.addEventListener('click', () => {
-                        currentPage = i;
+                .then(data => {
+                    if (data.success) {
+                        allEmployees.push({
+                            name: employeeName,
+                            department: empDept,
+                            email: email,
+                            id: employeeId, // Ensure 'id' matches the property used for filtering/display
+                            status: 'Unmarked', // Default status for new employees
+                            time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) // Current time
+                        });
                         filterAndRender();
-                    });
-                    paginationControls.appendChild(pageButton);
-                }
-
-                // Next button
-                const nextButton = document.createElement('button');
-                nextButton.textContent = '>';
-                nextButton.disabled = currentPage === totalPages;
-                nextButton.addEventListener('click', () => {
-                    currentPage++;
-                    filterAndRender();
-                });
-                paginationControls.appendChild(nextButton);
-            }
-
-            // Function to filter and render employees based on search and sort
-            function filterAndRender() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const sortBy = sortBySelect.value;
-
-                filteredEmployees = allEmployees.filter(employee =>
-                    employee.name.toLowerCase().includes(searchTerm) ||
-                    employee.department.toLowerCase().includes(searchTerm) ||
-                    employee.id.toLowerCase().includes(searchTerm)
-                );
-
-                if (sortBy === 'on-site') {
-                    filteredEmployees = filteredEmployees.filter(employee => employee.status === 'On Site');
-                } else if (sortBy === 'off-site') {
-                    filteredEmployees = filteredEmployees.filter(employee => employee.status === 'Off Site');
-                }
-
-                currentPage = 1; // Reset to first page after filtering
-                renderEmployees(filteredEmployees);
-            }
-
-            // Event Listeners for search and sort
-            searchInput.addEventListener('input', filterAndRender);
-            sortBySelect.addEventListener('change', filterAndRender);
-
-            // Initialize all modal functionality
-            function initializeModals() {
-                // Admin modal functionality
-                document.getElementById('adminButton').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    adminModal.style.display = 'flex';
-                });
-
-                // Employee modal functionality (triggered by the "View Employee" button in main panel)
-                document.querySelector('.add-employee-btn').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    employeeModal.style.display = 'flex';
-                });
-
-                // Cancel buttons for modals
-                document.getElementById('cancelAdmin').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    adminModal.style.display = 'none';
-                });
-
-                document.getElementById('cancelEmployee').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    employeeModal.style.display = 'none';
-                });
-
-                // Admin form submission (placeholder - in a real app, this would send data to a backend)
-                document.getElementById('adminForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    // You would typically collect form data here and send it to your server
-                    console.log('Admin Form Submitted');
-                    adminModal.style.display = 'none';
-                    // Add logic to handle admin creation/view here
-                });
-
-                // Employee form submission (placeholder - in a real app, this would send data to a backend)
-                document.getElementById('employeeForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const employeeName = document.getElementById('employeeName').value;
-                    const empDept = document.getElementById('empDept').value;
-                    const email = document.getElementById('email').value;
-                    const employeeId = document.getElementById('employeeId').value;
-
-                    if (!employeeName || !empDept || !email || !employeeId) {
-                        alert('Please fill in all fields.');
-                        return;
-                    }
-
-                    const newEmployee = {
-                        name: employeeName,
-                        department: empDept,
-                        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }), // Current time
-                        email: email,
-                        id: employeeId,
-                        status: "On Site" // Default status for new employee
-                    };
-
-                    // Add new employee to the existing data and re-render
-                    allEmployees.push(newEmployee);
-                    filterAndRender(); // Re-filter and re-render the table with the new employee
-                    employeeModal.style.display = 'none'; // Close modal
-                    document.getElementById('employeeForm').reset(); // Clear form
-                    console.log('Employee Form Submitted:', newEmployee);
-
-                    // In a real application, you'd send `newEmployee` data to your backend here.
-                    /*
-                    fetch('add_employee.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(newEmployee)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Success:', data);
-                        // If backend confirms, update allEmployees and re-render
-                        allEmployees.push(newEmployee);
-                        filterAndRender();
-                        employeeModal.style.display = 'none';
-                        document.getElementById('employeeForm').reset();
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        alert('Failed to add employee. Please try again.');
-                    });
-                    */
-                });
-
-
-                // Logout button functionality
-                document.getElementById('logoutButton').addEventListener('click', () => {
-                    logoutModal.style.display = 'flex';
-                });
-
-                // Mobile logout button functionality
-                document.getElementById('mobileLogoutButton').addEventListener('click', () => {
-                    logoutModal.style.display = 'flex';
-                });
-
-                document.getElementById('confirmLogoutBtn').addEventListener('click', () => {
-                    alert('Logging out...'); // Replace with actual logout logic (e.g., redirect to login page)
-                    logoutModal.style.display = 'none';
-                    // window.location.href = '/logout'; // Example redirect
-                });
-
-                document.getElementById('cancelLogoutBtn').addEventListener('click', () => {
-                    logoutModal.style.display = 'none';
-                });
-
-                // Panic button functionality
-                const panicConfirmationModal = document.getElementById('panic-confirmation-modal');
-                const confirmContinueBtn = document.getElementById('confirm-continue');
-                const cancelPanicBtn = document.getElementById('cancel-panic');
-
-                panicButton.addEventListener('click', () => {
-                    if (panicButton.classList.contains('off')) {
-                        panicConfirmationModal.style.display = 'flex'; // Show confirmation modal
+                        document.getElementById('employeeName').value = '';
+                        document.getElementById('empDept').value = '';
+                        document.getElementById('email').value = '';
+                        document.getElementById('employeeId').value = '';
+                        alert('Employee added successfully!');
                     } else {
-                        // If panic mode is already ON, clicking it turns it OFF directly
-                        panicButton.classList.remove('on');
-                        panicButton.classList.add('off');
-                        console.log('Panic Mode OFF');
+                        alert('Error adding employee: ' + data.message);
                     }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while adding the employee: ' + error.message);
                 });
 
-                confirmContinueBtn.addEventListener('click', () => {
-                    panicButton.classList.remove('off');
-                    panicButton.classList.add('on');
-                    panicConfirmationModal.style.display = 'none';
-                    console.log('Panic Mode ON');
-                    alert('Panic mode activated! Alerts triggered.'); // Placeholder for actual alert
-                });
+            employeeModal.style.display = 'none';
+        });
+    }
 
-                cancelPanicBtn.addEventListener('click', () => {
-                    panicConfirmationModal.style.display = 'none';
-                });
+    // Main function to filter and render table
+    function filterAndRender() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const sortBy = sortBySelect.value;
+
+        // Filter employees
+        filteredEmployees = allEmployees.filter(emp =>
+            (emp.name && emp.name.toLowerCase().includes(searchTerm)) ||
+            (emp.department && emp.department.toLowerCase().includes(searchTerm)) ||
+            (emp.email && emp.email.toLowerCase().includes(searchTerm)) ||
+            (emp.id && emp.id.toLowerCase().includes(searchTerm))
+        );
+
+        // Sort by status if needed
+        if (sortBy === 'on-site') {
+            filteredEmployees.sort((a, b) => {
+                if (a.status === b.status) return 0;
+                return a.status === 'On Site' ? -1 : 1;
+            });
+        } else if (sortBy === 'off-site') {
+            filteredEmployees.sort((a, b) => {
+                if (a.status === b.status) return 0;
+                return a.status === 'Off Site' ? -1 : 1;
+            });
+        }
+        // If sorting by default, you might want to sort by name or ID
+        else if (sortBy === 'default') {
+            filteredEmployees.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        }
 
 
-                // Hamburger menu functionality for mobile
-                hamburgerBtn.addEventListener('click', () => {
-                    mobileNav.classList.add('open');
-                    overlay.classList.add('open');
-                });
+        renderEmployeeTable();
+        updatePagination();
+    }
 
-                overlay.addEventListener('click', () => {
-                    mobileNav.classList.remove('open');
-                    overlay.classList.remove('open');
-                });
+    // Render the employee table
+    function renderEmployeeTable() {
+        if (!employeeTableBody) return;
+
+        employeeTableBody.innerHTML = '';
+
+        const start = (currentPage - 1) * pageSize;
+        const paginated = filteredEmployees.slice(start, start + pageSize);
+
+        if (paginated.length === 0) {
+            employeeTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No employees found.</td></tr>';
+            return;
+        }
+
+        paginated.forEach(emp => {
+            const row = document.createElement('tr');
+            const statusClass = emp.status === 'On Site' ? 'status-on' : (emp.status === 'Off Site' ? 'status-off' : 'status-unmarked');
+            row.innerHTML = `
+                <td>${emp.name || 'N/A'}</td>
+                <td>${emp.department || 'N/A'}</td>
+                <td>${emp.time || 'N/A'}</td>
+                <td>${emp.email || 'N/A'}</td>
+                <td>${emp.id || 'N/A'}</td>
+                <td><span class="status-badge ${statusClass}">${emp.status || 'Unmarked'}</span></td>
+            `;
+            employeeTableBody.appendChild(row);
+        });
+
+        updateDataInfo();
+    }
+
+    // Update the data info text
+    function updateDataInfo() {
+        if (!dataInfo) return;
+
+        const startEntry = filteredEmployees.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+        const endEntry = Math.min(currentPage * pageSize, filteredEmployees.length);
+        dataInfo.textContent = `Showing data ${startEntry} to ${endEntry} of ${filteredEmployees.length} entries`;
+    }
+
+    // Update pagination controls
+    function updatePagination() {
+        if (!paginationControls) return;
+
+        const totalPages = Math.ceil(filteredEmployees.length / pageSize);
+        paginationControls.innerHTML = '';
+
+        // Previous button
+        const prevButton = document.createElement('button');
+        prevButton.innerHTML = '&lt;';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderEmployeeTable();
+                updatePagination();
             }
         });
+        paginationControls.appendChild(prevButton);
+
+        // Page buttons
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        // First page
+        if (startPage > 1) {
+            const firstButton = document.createElement('button');
+            firstButton.textContent = '1';
+            firstButton.addEventListener('click', () => {
+                currentPage = 1;
+                renderEmployeeTable();
+                updatePagination();
+            });
+            paginationControls.appendChild(firstButton);
+
+            if (startPage > 2) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                paginationControls.appendChild(ellipsis);
+            }
+        }
+
+        // Middle pages
+        for (let i = startPage; i <= endPage; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.className = i === currentPage ? 'active' : '';
+            pageButton.addEventListener('click', () => {
+                currentPage = i;
+                renderEmployeeTable();
+                updatePagination();
+            });
+            paginationControls.appendChild(pageButton);
+        }
+
+        // Last page
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                paginationControls.appendChild(ellipsis);
+            }
+
+            const lastButton = document.createElement('button');
+            lastButton.textContent = totalPages;
+            lastButton.addEventListener('click', () => {
+                currentPage = totalPages;
+                renderEmployeeTable();
+                updatePagination();
+            });
+            paginationControls.appendChild(lastButton);
+        }
+
+        // Next button
+        const nextButton = document.createElement('button');
+        nextButton.innerHTML = '&gt;';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderEmployeeTable();
+                updatePagination();
+            }
+        });
+        paginationControls.appendChild(nextButton);
+    }
+
+    // Event listeners for search and sort
+    searchInput.addEventListener('input', () => {
+        currentPage = 1;
+        filterAndRender();
+    });
+
+    sortBySelect.addEventListener('change', () => {
+        currentPage = 1;
+        filterAndRender();
+    });
+
+    // Mobile navigation
+    hamburgerBtn.addEventListener('click', toggleMobileNav);
+    overlay.addEventListener('click', toggleMobileNav);
+
+    function toggleMobileNav() {
+        mobileNav.classList.toggle('open');
+        overlay.classList.toggle('open');
+    }
+
+    // Logout functionality
+    document.getElementById('logoutButton').addEventListener('click', (e) => {
+        e.preventDefault();
+        logoutModal.style.display = 'flex';
+    });
+
+    document.getElementById('confirmLogoutBtn').addEventListener('click', () => {
+        logoutModal.innerHTML = `
+            <div class="logout-modal">
+                <p>✅ Logged out successfully!</p>
+            </div>
+        `;
+        setTimeout(() => {
+            window.location.href = "login.html";
+        }, 2000);
+    });
+
+    document.getElementById('cancelLogoutBtn').addEventListener('click', () => {
+        logoutModal.style.display = 'none';
+    });
+
+    // Panic button functionality
+    panicButton.addEventListener('click', function() {
+        const panicConfirmationModal = document.getElementById('panic-confirmation-modal');
+        if (this.classList.contains("off")) {
+            this.classList.remove("off");
+            this.classList.add("on");
+            panicConfirmationModal.style.display = "flex";
+        } else {
+            // If already "on" and clicked again, turn it off directly
+            this.classList.remove("on");
+            this.classList.add("off");
+            panicConfirmationModal.style.display = "none"; // Hide modal if toggled off
+        }
+    });
+
+    document.getElementById('confirm-continue').addEventListener('click', () => {
+        window.location.href = "Panic-page.html";
+    });
+
+    document.getElementById('cancel-panic').addEventListener('click', () => {
+        panicButton.classList.remove("on");
+        panicButton.classList.add("off");
+        document.getElementById('panic-confirmation-modal').style.display = "none";
+    });
+
+    // Mobile logout functionality
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+    if (mobileLogoutBtn) {
+        mobileLogoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleMobileNav(); // Close the mobile menu
+            logoutModal.style.display = 'flex'; // Show the same logout modal
+        });
+    }
+});
     </script>
 </body>
 </html>

@@ -194,7 +194,7 @@
         <!-- Admin ID input group -->
         <div class="input-group">
           <i class='bx  bx-user-circle'></i> 
-          <input type="text" id="userId" placeholder="Admin ID" required />
+          <input type="text" id="email" placeholder="Admin Email" required />
         </div>
         <!-- Password input group -->
         <div class="input-group">
@@ -222,7 +222,40 @@
     </div>
   </div>
   <script>
-    const loginForm = document.getElementById('login-form'); // Login form
-  </script>
+  document.getElementById('login-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    try {
+      const response = await fetch('http://localhost/attendance/Backend/login.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Storing JWT in localStorage
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('adminName', data.admin.username);
+
+        alert(data.message);
+        // Redirecting to dashboard
+        window.location.href = 'dashboard.html';
+      } else {
+        document.getElementById('error-message').textContent = data.message || 'Login failed';
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      document.getElementById('error-message').textContent = 'Network error';
+    }
+  });
+</script>
+
 </body>
 </html>
