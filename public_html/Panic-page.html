@@ -7,6 +7,7 @@
   <!-- Boxicons CDN for icons -->
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"  rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
   <style>
     /* Basic styling panic-dashboard */
     body {
@@ -443,7 +444,16 @@
     </div>
   </div>
 
+   <script src="auth.js"></script>
+  
   <script>
+
+      async function init() {
+      // Run your token validation
+      await checkAuth();
+      }
+
+
     // Panic Button toggle
     const panicBtn = document.getElementById('panicButton');
     panicBtn.addEventListener('click', () => {

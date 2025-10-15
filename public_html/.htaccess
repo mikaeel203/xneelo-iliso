@@ -1,0 +1,10 @@
+# Enable Apache rewrite engine
+RewriteEngine On
+
+# Force HTTPS (optional, remove if you don't want it)
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Redirect from old localhost-style path to new backend path
+RewriteCond %{HTTP_HOST} ^atracker\.lcstudio-incubate\.co\.za$ [NC]
+RewriteRule ^xneelo-iliso/backend/(.*)$ /backend/$1 [R=301,L]

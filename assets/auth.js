@@ -5,11 +5,11 @@ function checkAuth() {
 
   if (!token) {
     alert('You must log in first');
-    window.location.href = 'login.html';
+    window.location.href = 'https://atracker.lcstudio-incubate.co.za/';
     return;
   }
 
-  fetch('http://localhost/htdocs/Backend/validate-token.php', {
+  fetch('https://atracker.lcstudio-incubate.co.za/public_html/backend/auth.php', {
     method: 'GET',
     headers: {
       'Authorization': 'Bearer ' + token
@@ -19,10 +19,15 @@ function checkAuth() {
     if (!res.ok) {
       throw new Error('Invalid token');
     }
+     return res.json();
+  })
+   .then(data => {
+    console.log('Token is valid:', data);
+  
   })
   .catch(() => {
     alert('Session expired or invalid. Please log in again.');
     localStorage.removeItem('token');
-    window.location.href = 'login.html';
+    window.location.href = 'https://atracker.lcstudio-incubate.co.za/';
   });
 }

@@ -82,7 +82,7 @@ $updateStmt->bind_param("ssi", $token, $expiry, $admin_id);
 $updateStmt->execute();
 $updateStmt->close();
 
-$resetLink = "http://127.0.0.1:5501/ResetPassword.html?token=$token&email=$email";
+$resetLink = "https://atracker.lcstudio-incubate.co.za//public_html/ResetPassword.html?token=$token&email=$email";
 
 $mail = new PHPMailer(true);
 
